@@ -263,3 +263,5 @@ Sexbias_IntSlopes_sd <-
         axis.title.x = element_blank(),
         axis.title.y = element_blank()  ) +
   coord_flip()
+
+
