@@ -1,0 +1,298 @@
+Category,parameter_name,parameter_group
+Behaviour,average duration,average duration
+Behaviour,center average speed,center average speed
+Behaviour,center distance travelled,center distance travelled
+Behaviour,center permanence time,center time
+Behaviour,center resting time,center time
+Behaviour,conditioning baseline freeze count,conditioning freeze count
+Behaviour,conditioning post-shock freeze count,conditioning freeze count
+Behaviour,conditioning baseline freezing time,conditioning freezing time
+Behaviour,conditioning post-shock freezing time,conditioning freezing time
+Behaviour,conditioning tone freeze count,conditioning tone freeze count
+Behaviour,conditioning tone freezing time,conditioning tone freezing time
+Eye,cone b-wave amplitude-left,cone b-wave amplitude
+Eye,cone b-wave amplitude-right,cone b-wave amplitude
+Eye,cone b-wave implicit time-left,cone b-wave implicit time
+Eye,cone b-wave implicit time-right,cone b-wave implicit time
+Behaviour,context freeze count,context freeze count
+Behaviour,context freezing time,context freezing time
+Behaviour,cue baseline freeze count,cue baseline freeze count
+Behaviour,cue baseline freezing time,cue baseline freezing time
+Behaviour,dark side time spent,time spent
+Behaviour,distance travelled - total,distance travelled - total
+Behaviour,hot plate latency,hot plate latency
+Behaviour,latency to center entry,latency to center entry
+Behaviour,latency to fall mean,latency to fall mean
+Behaviour,latency to first transition into dark,latency to first transition into dark
+Behaviour,latency to immobility,latency to immobility
+Behaviour,learning difference,learning difference
+Behaviour,learning slope,learning slope
+Behaviour,locomotor activity,locomotor activity
+Behaviour,ma threshold inducing clonic seizure,ma threshold inducing clonic seizure
+Behaviour,total number of acquired events in panel a,number events
+Behaviour,total number of acquired events in panel b,number events
+Behaviour,percent time in dark,percent time
+Behaviour,percent time in light,percent time
+Behaviour,percentage center time,percentage center time
+Behaviour,percentage of live gated events in panel a,percentage of live gated events
+Behaviour,percentage of live gated events in panel b,percentage of live gated events
+Behaviour,periphery average speed,periphery average speed
+Behaviour,periphery distance travelled,periphery distance travelled
+Behaviour,periphery permanence time,periphery time
+Behaviour,periphery resting time,periphery time
+Behaviour,% pre-pulse inhibition - global,pre-pulse inhibition
+Behaviour,% pre-pulse inhibition - ppi1,pre-pulse inhibition
+Behaviour,% pre-pulse inhibition - ppi2,pre-pulse inhibition
+Behaviour,% pre-pulse inhibition - ppi3,pre-pulse inhibition
+Behaviour,% pre-pulse inhibition - ppi4,pre-pulse inhibition
+Hearing,response amplitude - bn,response amplitude
+Hearing,response amplitude - pp1,response amplitude
+Hearing,response amplitude - pp1_s,response amplitude
+Hearing,response amplitude - pp2,response amplitude
+Hearing,response amplitude - pp2_s,response amplitude
+Hearing,response amplitude - pp3,response amplitude
+Hearing,response amplitude - pp3_s,response amplitude
+Hearing,response amplitude - pp4,response amplitude
+Hearing,response amplitude - pp4_s,response amplitude
+Hearing,response amplitude - s,response amplitude
+Eye,rod a-wave implicit time-left,rod a-wave implicit time
+Eye,rod a-wave implicit time-right,rod a-wave implicit time
+Eye,rod b-wave amplitude-left,rod b-wave amplitude
+Eye,rod b-wave amplitude-right,rod b-wave amplitude
+Eye,rod b-wave implicit time-left,rod b-wave implicit time
+Eye,rod b-wave implicit time-right,rod b-wave implicit time
+Behaviour,shock intensity flinch,shock intensity flinch
+Behaviour,shock intensity jump,shock intensity jump
+Behaviour,shock intensity vocalization,shock intensity vocalization
+Behaviour,side changes,side changes
+Behaviour,time immobile,time mobile
+Behaviour,time mobile dark side,time mobile
+Behaviour,time mobile light side,time mobile
+Behaviour,whole arena average speed,whole arena average speed
+Behaviour,whole arena permanence,whole arena
+Behaviour,whole arena resting time,whole arena
+Eye,right anterior chamber depth,anterior chamber depth
+Eye,left corneal thickness,corneal thickness
+Eye,right corneal thickness,corneal thickness
+Eye,eye size-left,eye size
+Eye,eye size-right,eye size
+Eye,left inner nuclear layer,inner nuclear layer
+Eye,right inner nuclear layer,inner nuclear layer
+Eye,interpupillary distance,interpupillary distance
+Eye,left anterior chamber depth,left anterior chamber depth
+Eye,time spent,light side time spent
+Eye,left outer nuclear layer,outer nuclear layer
+Eye,right outer nuclear layer,outer nuclear layer
+Eye,left posterior chamber depth,posterior chamber depth
+Eye,right posterior chamber depth,posterior chamber depth
+Eye,left total retinal thickness,total retinal thickness
+Eye,right total retinal thickness,total retinal thickness
+Eye,right vitreous humor thickness,vitreous humor thickness
+Eye,left vitreous humour thickness,vitreous humor thickness
+Hearing,12khz-evoked abr threshold,abr threshold
+Hearing,18khz-evoked abr threshold,abr threshold
+Hearing,24khz-evoked abr threshold,abr threshold
+Hearing,30khz-evoked abr threshold,abr threshold
+Hearing,6khz-evoked abr threshold,abr threshold
+Hearing,click-evoked abr threshold,abr threshold
+Physiology,body temp,body temp
+Heart,cardiac output,cardiac output
+Heart,cv,cv
+Heart,ejection fraction,ejection fraction
+Heart,end-diastolic diameter,end-diastolic diameter
+Heart,end-systolic diameter,end-systolic diameter
+Heart,fractional shortening,fractional shortening
+Heart,hr,hr
+Heart,hrv,hrv
+Heart,lvawd,lvawd
+Heart,lvaws,lvaws
+Heart,lvidd,lvidd
+Heart,lvids,lvids
+Heart,lvpwd,lvpwd
+Heart,lvpws,lvpws
+Heart,mean r amplitude,mean r amplitude
+Heart,mean sr amplitude,mean sr amplitude
+Heart,pnn5(6>ms),pnn5(6>ms)
+Heart,pq,pq
+Heart,pr,pr
+Heart,qrs,qrs
+Heart,qtc,qtc
+Heart,qtc dispersion,qtc dispersion
+Heart,respiration rate,respiration rate
+Heart,rmssd,rmssd
+Heart,rr,rr
+Heart,st,st
+Heart,stroke volume,stroke volume
+Hematology,basophil cell count,basophil count
+Hematology,basophil differential count,basophil count
+Hematology,eosinophil cell count,eosinophils
+Hematology,eosinophil differential count,eosinophils
+Hematology,eosinophils,eosinophils
+Hematology,hematocrit,hematocrit
+Hematology,hemoglobin,hemoglobin
+Hematology,large unstained cell (luc) count,luc
+Hematology,large unstained cell (luc) differential count,luc
+Hematology,lymphocyte cell count,lymphocytes
+Hematology,lymphocyte differential count,lymphocytes
+Hematology,mean cell hemoglobin concentration,mean cell hemoglobin concentration
+Hematology,mean cell volume,mean cell volume
+Hematology,mean corpuscular hemoglobin,mean corpuscular hemoglobin
+Hematology,mean platelet volume,mean platelet volume
+Hematology,monocyte cell count,monocytes
+Hematology,monocyte differential count,monocytes
+Hematology,monocytes,monocytes
+Hematology,neutrophil cell count,neutrophils
+Hematology,neutrophil differential count,neutrophils
+Hematology,neutrophils,neutrophils
+Hematology,platelet count,platelet count
+Hematology,red blood cell count,red blood cell count
+Hematology,red blood cell distribution width,red blood cell distribution width
+Hematology,white blood cell count,white blood cell count
+Immunology,b cells,B cells
+Immunology,b1b cells,B cells
+Immunology,b2b cells,B cells
+Immunology,transitional b cells,B cells
+Immunology,transitional b cells (cd21/35 low),B cells
+Immunology,cd4 cd25- nkt cells,cd4 nkt
+Immunology,cd4 cd25+ nkt cells,cd4 nkt
+Immunology,cd4 cd44-cd62l+ nkt cells,cd4 nkt
+Immunology,cd4 cd44+cd62l- nkt cells,cd4 nkt
+Immunology,cd4 cd44+cd62l+ nkt cells,cd4 nkt
+Immunology,cd4 nkt cells,cd4 nkt
+Immunology,cd24+ cd4 t cells,cd4 t
+Immunology,cd24+ cd8 t cells,cd4 t
+Immunology,cd4 cd25- t cells,cd4 t
+Immunology,cd4 cd25+ t cells,cd4 t
+Immunology,cd4 cd44-cd62l- t cells,cd4 t
+Immunology,cd4 cd44-cd62l+ t cells,cd4 t
+Immunology,cd4 cd44+cd62l- t cells,cd4 t
+Immunology,cd4 cd44+cd62l+ t cells,cd4 t
+Immunology,cd4 t cells,cd4 t
+Immunology,cd8 cd25- nkt cells,cd8 nkt
+Immunology,cd8 cd25+ nkt cells,cd8 nkt
+Immunology,cd8 cd44-cd62l+ nkt cells,cd8 nkt
+Immunology,cd8 cd44+cd62l- nkt cells,cd8 nkt
+Immunology,cd8 cd44+cd62l+ nkt cells,cd8 nkt
+Immunology,cd8 nkt cells,cd8 nkt
+Immunology,cd8 cd25- t cells,cd8 t
+Immunology,cd8 cd25+ t cells,cd8 t
+Immunology,cd8 cd44-cd62l- t cells,cd8 t
+Immunology,cd8 cd44-cd62l+ t cells,cd8 t
+Immunology,cd8 cd44+cd62l- t cells,cd8 t
+Immunology,cd8 cd44+cd62l+ t cells,cd8 t
+Immunology,cd8 t cells,cd8 t
+Immunology,cdcs,cdcs
+Immunology,cdcs cd11b type,cdcs
+Immunology,cellularity,cellularity
+Immunology,dn cd25- nkt cells,dn nkt
+Immunology,dn cd25+ nkt cells,dn nkt
+Immunology,dn cd44-cd62l+ nkt cells,dn nkt
+Immunology,dn cd44+cd62l- nkt cells,dn nkt
+Immunology,dn cd44+cd62l+ nkt cells,dn nkt
+Immunology,dn nkt cells,dn nkt
+Immunology,dn cd25- t cells,dn t
+Immunology,dn cd25+ t cells,dn t
+Immunology,dn cd44-cd62l- t cells,dn t
+Immunology,dn cd44-cd62l+ t cells,dn t
+Immunology,dn cd44+cd62l- t cells,dn t
+Immunology,dn cd44+cd62l+ t cells,dn t
+Immunology,dn t cells,dn t
+Immunology,dp t cells,dp t
+Immunology,follicular b cells,follicular b cells
+Immunology,follicular b cells (cd21/35+),follicular b cells
+Immunology,klrg1+ cd4 t cells,klrg1
+Immunology,klrg1+ cd4+ nkt cells,klrg1
+Immunology,klrg1+ t-regs,klrg1
+Immunology,mzb,mzb
+Immunology,mzb (cd21/35 high),mzb
+Immunology,cd44+ t-regs,cd44+ t-regs
+Immunology,cd62l+ t-regs,cd62l+ t-regs
+Immunology,nk cells (panel a),nk cells
+Immunology,nk cells (panel b),nk cells
+Immunology,nk klrg1+ cells,nk cells
+Immunology,nk subsets (q1),nk cells
+Immunology,nk subsets (q2),nk cells
+Immunology,nk subsets (q3),nk cells
+Immunology,nk subsets (q4),nk cells
+Immunology,nkt dn klrg1+ cells,nk cells
+Immunology,nkt cells (panel a),nkt cells
+Immunology,nkt cells (panel b),nkt cells
+Immunology,nkt subsets (q1),nkt cells
+Immunology,nkt subsets (q3),nkt cells
+Immunology,others,others
+Immunology,pdcs,pdcs
+Immunology,rp macrophage (cd19-  cd11c-),rp macrophage (cd19-  cd11c-)
+Immunology,rp macrophage (f4/80+),rp macrophage (f4/80+)
+Immunology,gd t cells,t cells
+Immunology,t cells (panel a),t cells
+Immunology,t cells (panel b),t cells
+Immunology,t subset,t cells
+Metabolism,area under glucose response curve,area under glucose response curve
+Metabolism,fasted blood glucose concentration,fasted blood glucose concentration
+Metabolism,glucose,glucose
+Metabolism,glycosilated hemoglobin a1c (hba1c),glycosilated hemoglobin a1c (hba1c)
+Metabolism,initial response to glucose challenge,initial response to glucose challenge
+Metabolism,insulin,insulin
+Metabolism,respiratory exchange ratio,respiration rate
+Metabolism,total food intake,total food intake
+Metabolism,total water intake,total water intake
+Morphology,bmc/body weight,bmc/body weight
+Morphology,body length,body length
+Morphology,bone area,bone area
+Morphology,bone mineral content (excluding skull),bone mineral content (excluding skull)
+Morphology,bone mineral density (excluding skull),bone mineral density (excluding skull)
+Morphology,fat mass,fat mass
+Morphology,fat/body weight,fat mass
+Morphology,heart weight,heart weight
+Morphology,heart weight normalised against body weight,heart weight
+Morphology,lean mass,lean mass
+Morphology,lean/body weight,lean mass
+Behaviour,forelimb and hindlimb grip strength measurement mean,limb strength
+Behaviour,forelimb and hindlimb grip strength normalised against body weight,limb strength
+Behaviour,forelimb grip strength measurement mean,limb strength
+Behaviour,forelimb grip strength normalised against body weight,limb strength
+Morphology,number of caudal vertebrae,number of caudal vertebrae
+Morphology,number of center entries,number of center entries
+Morphology,number of cervical vertebrae,number of cervical vertebrae
+Morphology,number of digits,number of digits
+Morphology,number of lumbar vertebrae,number of lumbar vertebrae
+Morphology,number of pelvic vertebrae,number of pelvic vertebrae
+Morphology,number of rears - total,number of rears - total
+Morphology,number of ribs left,number of ribs
+Morphology,number of ribs right,number of ribs
+Morphology,number of signals,number of signals
+Morphology,number of thoracic vertebrae,number of thoracic vertebrae
+Morphology,spleen weight,spleen weight
+Morphology,tibia length,tibia length
+Physiology,alanine aminotransferase,alanine aminotransferase
+Physiology,albumin,albumin
+Physiology,albumin to creatinine ratio,albumin to creatinine ratio
+Physiology,alkaline phosphatase,alkaline phosphatase
+Physiology,alpha-amylase,alpha-amylase
+Physiology,aspartate aminotransferase,aspartate aminotransferase
+Physiology,calcium,calcium
+Physiology,chloride,chloride
+Physiology,creatine kinase,creatine kinase
+Physiology,creatinine,creatinine
+Physiology,free fatty acids,free fatty acids
+Physiology,fructosamine,fructosamine
+Physiology,glycerol,glycerol
+Physiology,hdl cholesterol,hdl-cholesterol
+Physiology,hdl-cholesterol,hdl-cholesterol
+Physiology,iron,iron
+Physiology,lactate dehydrogenase,lactate dehydrogenase
+Physiology,ldl-cholesterol,ldl-cholesterol
+Physiology,lipase,lipase
+Physiology,magnesium,magnesium
+Physiology,microalbumin (calculated),microalbumin (calculated)
+Physiology,phosphorus,phosphorus
+Physiology,potassium,potassium
+Physiology,sodium,sodium
+Physiology,thyroxine,thyroxine
+Physiology,total bilirubin,total bilirubin
+Physiology,total cholesterol,total cholesterol
+Physiology,total protein,total protein
+Physiology,triglycerides,triglycerides
+Physiology,uibc (unsaturated iron binding capacity),uibc (unsaturated iron binding capacity)
+Physiology,urea (blood urea nitrogen - bun),urea (blood urea nitrogen - bun)
+Physiology,uric acid,uric acid
