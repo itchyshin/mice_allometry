@@ -1,14 +1,30 @@
 # analysis
 #TODO - need to get contrasts between male SD and female SD
-# TODO - sorting out to the senario!!
+# TODO - sorting out to the scenario!!
 
+# package
+library(purrr)
+library(metafor)
+library(tidyverse)
+library(here)
 
 
 # first getting p values - contrast between males and females for 
 
-
+dat <-read_csv(here("Laura/data_parameters.csv"))
 
 #assess number of traits with sig shifts in intercept and slope
+
+# getting lnVR to compare SDs
+
+dat %>% mutate(lnVR = log(dat$f_sd/dat$m_sd) + 1/(2*(dat$f_n-1)) - 1/(2*(dat$m_n-1)), VlnVR, low_lnVR , high_lnVR)
+
+
+dat$lnVR <- log(dat$f_sd/dat$m_sd) + 1/(2*(dat$f_n-1)) - 1/(2*(dat$m_n-1))
+dat$VlnVR <-  1/(2*(dat$f_n-1)) + 1/(2*(dat$m_n-1))
+
+# lower and upper
+
 
 #16 out of 300 traits sig slope diff - scenario A
 Fin_dat_slopes<-Fin_dat2a %>%
