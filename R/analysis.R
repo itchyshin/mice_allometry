@@ -7,42 +7,64 @@ library(purrr)
 library(metafor)
 library(tidyverse)
 library(here)
-
+library(poolr)
 
 # first getting p values - contrast between males and females for 
 
-dat <-read_csv(here("Laura/data_parameters.csv"))
+dat <-read_csv(here("data/data_parameters.csv"))
 
 #assess number of traits with sig shifts in intercept and slope
 
-# getting lnVR to compare SDs
+# getting lnVR to compare SDs and SD
 
-dat %>% mutate(lnVR = log(dat$f_sd/dat$m_sd) + 1/(2*(dat$f_n-1)) - 1/(2*(dat$m_n-1)), VlnVR, low_lnVR , high_lnVR)
+dat %>% mutate(lnVR = log(f_sd/m_sd) + 1/(2*(f_n-1)) - 1/(2*(m_n-1)), 
+               VlnVR = 1/(2*(f_n-1)) + 1/(2*(m_n-1)), 
+               low_lnVR = lnVR - qnorm(0.975)*VlnVR, 
+               high_lnVR = lnVR + qnorm(0.975)*VlnVR,
+               t_val_sd = lnVR/sqrt(VlnVR),
+               p_val_sd = 2*(1-pt(abs(t_val_sd), f_n-1 + m_n-1))
+                           ) -> dat
 
+# signifcantly different 
+length(which(dat$p_val_sd <= 0.05))
+hist(log(dat$p_val_sd)) # p = 0.05 ~ - 3
+# 151 out of 297 - this means almost all residual SD are heteroscadaistic (it is probably due to large n in our dataset) = over 50%!!
 
-dat$lnVR <- log(dat$f_sd/dat$m_sd) + 1/(2*(dat$f_n-1)) - 1/(2*(dat$m_n-1))
-dat$VlnVR <-  1/(2*(dat$f_n-1)) + 1/(2*(dat$m_n-1))
+# kinda very surprising! (very powerful) - in Susi's elife paper - we only go ~ 40% of lnVR significant so it matches
 
-# lower and upper
+#29 out of 297 traits sig slope diff - scenario A
+dat_slopes <-dat %>%
+  filter (fm_diff_slope_p <= 0.05 & fm_diff_int_p > 0.05)
 
+dim(dat_slopes) 
+#[1] 11 29
+#107 out of 297 traits sig intercept diff  same slope - scenario B
+dat_int<- dat %>%
+  filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p >0.05)
+dim(dat_int) 
 
-#16 out of 300 traits sig slope diff - scenario A
-Fin_dat_slopes<-Fin_dat2a %>%
-  filter (fm_diff_slope_p <0.05 & fm_diff_int_p > 0.05)
+#77 out of 297 sig intercept and slope diff - scenario C
+dat_intSlopes<-dat %>%
+  filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p <0.05)
+dim(dat_intSlopes) 
 
-length(Fin_dat_slopes) 
-
-#109 out of 300 traits sig intercept diff  same slope - scenario B
-Fin_dat_int<- Fin_dat2a %>%
-  filter (fm_diff_int_p <0.05 & fm_diff_slope_p >0.05)
-
-#73 out of 300 sig intercept and slope diff - scenario C
-Fin_dat_intSlopes<-Fin_dat2a%>%
-  filter (fm_diff_int_p <0.05 & fm_diff_slope_p <0.05)
-
-#102 no sig difference between intercept and slope - scenario D
-Fin_dat_intslopesNS<-Fin_dat2a %>%
+#101 no sig difference between intercept and slope - scenario D
+dat_intslopesNS<- dat %>%
   filter (fm_diff_slope_p >0.05 & fm_diff_int_p > 0.05)
+dim(dat_intslopesNS) 
+
+# here we need to collapse p values which are related
+# split data into 2 ones with replicatioins within parameter_group
+
+dat %>% group_by(parameter_group) %>% mutate(count = n()) -> dat
+
+dat1 <- 
+
+dat2 
+
+# We will use poolr to get 
+
+
 
 #rbind the above scenarios into one matrix with identifier letter A,B,C,D
 ScenarioA<-Fin_dat_slopes %>% add_column(Scen="A")
