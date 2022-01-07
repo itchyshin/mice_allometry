@@ -80,7 +80,7 @@ Eye,left inner nuclear layer,inner nuclear layer
 Eye,right inner nuclear layer,inner nuclear layer
 Eye,interpupillary distance,interpupillary distance
 Eye,left anterior chamber depth,left anterior chamber depth
-Eye,time spent,light side time spent
+Behaviour,light side time spent,time spent
 Eye,left outer nuclear layer,outer nuclear layer
 Eye,right outer nuclear layer,outer nuclear layer
 Eye,left posterior chamber depth,posterior chamber depth

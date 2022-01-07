@@ -32,13 +32,13 @@ hist(log(dat$p_val_sd)) # p = 0.05 ~ - 3
 
 # kinda very surprising! (very powerful) - in Susi's elife paper - we only go ~ 40% of lnVR significant so it matches
 
-#29 out of 297 traits sig slope diff - scenario A
+#11 out of 297 traits sig slope diff - scenario A
 dat_slopes <-dat %>%
   filter (fm_diff_slope_p <= 0.05 & fm_diff_int_p > 0.05)
 
 dim(dat_slopes) 
-#[1] 11 29
-#107 out of 297 traits sig intercept diff  same slope - scenario B
+
+#108 out of 297 traits sig intercept diff  same slope - scenario B
 dat_int<- dat %>%
   filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p >0.05)
 dim(dat_int) 
@@ -54,17 +54,152 @@ dat_intslopesNS<- dat %>%
 dim(dat_intslopesNS) 
 
 # here we need to collapse p values which are related
-# split data into 2 ones with replicatioins within parameter_group
+# split data into 2 ones with replications within parameter_group
 
 dat %>% group_by(parameter_group) %>% mutate(count = n()) -> dat
+# 
+dat1 <- dat[which(dat$count == 1), ]
+# 
+length(which(dat1$p_val_sd <= 0.05))
+# 81 out of 131
+# 
+# 
+dat2 <- dat[-which(dat$count == 1), ]
+# 
+# # We will use poolr to get 
+# 
+# test_dat <-dat2[3:6, ]
+# 
+# Rmat <- diag(4)
+# Rmat[lower.tri(Rmat)]<-0.8
+# Rmat[upper.tri(Rmat)]<-0.8
+# 
+# p_mod <- fisher(test_dat$p_val_sd, adjust = "empirical", R = Rmat)
+# 
+# p_mod$p
 
-dat1 <- 
+# function to get merged p value for SD
 
-dat2 
+p_mod_sd <-function(data){
+  
+  len <- dim(data)[1]
+  Rmat <- matrix(0.8, nrow = len, ncol = len)
+  diag(Rmat) <- 1
+  
+  p_mod <- fisher(data$p_val_sd, adjust = "liji", R = Rmat)
+  p<- p_mod$p
+  return(p)
+  
+}
 
-# We will use poolr to get 
+# slope
+
+p_mod_slp <-function(data){
+  
+  len <- dim(data)[1]
+  Rmat <- matrix(0.8, nrow = len, ncol = len)
+  diag(Rmat) <- 1
+  
+  p_mod <- fisher(data$fm_diff_slope_p, adjust = "liji", R = Rmat)
+  p<- p_mod$p
+  return(p)
+  
+}
 
 
+# intersect
+
+p_mod_int <-function(data){
+  
+  len <- dim(data)[1]
+  Rmat <- matrix(0.8, nrow = len, ncol = len)
+  diag(Rmat) <- 1
+  
+  p_mod <- fisher(data$fm_diff_int_p, adjust = "liji", R = Rmat)
+  p<- p_mod$p
+  return(p)
+  
+}
+
+# test
+
+p_mod_sd(test_dat)
+p_mod_int(test_dat)
+p_mod_slp(test_dat)
+
+# nesting data into a lot of data sets and apply p_mod function
+
+n_dat2 <- dat2 %>% group_by(parameter_group) %>%  nest()
+
+m_dat2 <- n_dat2  %>% mutate(merged_p_sd = map_dbl(data, p_mod_sd), 
+                             merged_p_int = map_dbl(data, p_mod_int),
+                             merged_p_slp = map_dbl(data, p_mod_slp)
+                               )
+
+m_dat2 %>% unnest(data) -> dat2
+
+length(which(m_dat2$merged_p_sd <= 0.05))
+# 33 out of 51
+length(which(dat1$p_val_sd <= 0.05))
+# 81 out of 131
+
+# (33 + 81) = 113 out of (51 + 131) = 182; 113 out of 182
+
+#################
+# creating merged p or intercepts and slopes
+###################
+
+#first just checkin gone with dat1
+
+dim(dat1)
+
+#7 out of 130 traits sig slope diff - scenario A
+dat_slopes1 <-dat1 %>%
+  filter (fm_diff_slope_p <= 0.05 & fm_diff_int_p > 0.05)
+
+dim(dat_slopes1) 
+
+# 1 out of 52
+dat_slopes2 <-m_dat2 %>%
+  filter (merged_p_slp <= 0.05 & merged_p_int > 0.05)
+
+dim(dat_slopes2) 
+
+#41 out of 130 traits sig intercept diff  same slope - scenario B
+dat_int1<- dat1 %>%
+  filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p >0.05)
+dim(dat_int1) 
+
+# 22 out of 52
+dat_int2 <-m_dat2 %>%
+  filter (merged_p_int <= 0.05 & merged_p_slp > 0.05)
+
+dim(dat_int2) 
+
+#56 out of 130 sig intercept and slope diff - scenario C
+dat_intSlopes1<-dat1 %>%
+  filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p <= 0.05)
+dim(dat_intSlopes1) 
+
+# 12 out of 52
+dat_intSlopes2 <-m_dat2 %>%
+  filter (merged_p_int <= 0.05 & merged_p_slp <= 0.05)
+
+dim(dat_intSlopes2) 
+
+
+#26 no sig difference between intercept and slope - scenario D
+dat_intslopesNS1<- dat1 %>%
+  filter (fm_diff_slope_p >0.05 & fm_diff_int_p > 0.05)
+dim(dat_intslopesNS1) 
+
+# 17 out of 52
+dat_intslopesNS2 <-m_dat2 %>%
+  filter (merged_p_int > 0.05 & merged_p_slp > 0.05)
+
+dim(dat_intslopesNS2) 
+
+# TODO 
 
 #rbind the above scenarios into one matrix with identifier letter A,B,C,D
 ScenarioA<-Fin_dat_slopes %>% add_column(Scen="A")

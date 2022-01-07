@@ -1,6 +1,7 @@
 # script to get effect size estimates comparing females and males
 # TODO meta-data needs to be done!!
 
+# the data set contains 301 taits - but 4 duplicates
 
 # package
 library(nlme)
@@ -93,10 +94,10 @@ get_parmetersN<- function(i){
 }
 
 # loading data
-dat_list <- readRDS(here("Laura/dat_list.rds"))
+dat_list <- readRDS(here("data/dat_list.rds"))
 
 # grouping for category and parameter_group
-dat_category<-read_csv(here("Laura/cateogry_parameter2.csv")) 
+dat_category<-read_csv(here("data/cateogry_parameter2.csv")) 
 
 #run individual tests on single matrices extracted from dat_list
 testInd_dat1<- dat_list[[1]] #male is 1
@@ -114,19 +115,17 @@ res1<-get_parmetersN(testInd_dat1) # this works
 #                data = testInd_dat1)
 
 
-
-
-
 #run function across list of matrices
-Fin_dat<-map_dfr(dat_list,get_parmetersN)
+Fin_dat<-map_dfr(dat_list, get_parmetersN)
 
+Fin_dat[Fin_dat$parameter_name == "light side time spent",]
 
-dat<-Fin_dat[-c(27:30),] #remove "body weight" duplicates
+#remove "body weight" duplicates 
+dat<-Fin_dat[-c(27:30),] 
 
+dat %>% left_join(dat_category, by = ("parameter_name" = "parameter_name") ) %>% arrange(Category)  -> dat
 
-dat_category %>% left_join(dat) %>% arrange(Category)  -> dat
-
-write_csv(dat, here("Laura/data_parameters.csv"))
+write_csv(dat, here("data/data_parameters.csv"))
 
 # TODO meta-data needs to be done!!
 
