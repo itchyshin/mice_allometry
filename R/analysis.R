@@ -60,9 +60,10 @@ dat %>% group_by(parameter_group) %>% mutate(count = n()) -> dat
 # 
 dat1 <- dat[which(dat$count == 1), ]
 # 
+dim(dat1)
+
 length(which(dat1$p_val_sd <= 0.05))
-# 81 out of 131
-# 
+# 80 out of 129
 # 
 dat2 <- dat[-which(dat$count == 1), ]
 # 
@@ -139,11 +140,11 @@ m_dat2 <- n_dat2  %>% mutate(merged_p_sd = map_dbl(data, p_mod_sd),
 m_dat2 %>% unnest(data) -> dat2
 
 length(which(m_dat2$merged_p_sd <= 0.05))
-# 33 out of 51
+# 33 out of 52
 length(which(dat1$p_val_sd <= 0.05))
-# 81 out of 131
+# 80 out of 129
 
-# (33 + 81) = 113 out of (51 + 131) = 182; 113 out of 182
+# (33 + 80) = 113 out of (52 + 129) = 181; 113 out of 181
 
 #################
 # creating merged p or intercepts and slopes
@@ -153,7 +154,13 @@ length(which(dat1$p_val_sd <= 0.05))
 
 dim(dat1)
 
-#7 out of 130 traits sig slope diff - scenario A
+######
+# A
+######
+
+# 8 out of 181
+
+#7 out of 129 traits sig slope diff - scenario A
 dat_slopes1 <-dat1 %>%
   filter (fm_diff_slope_p <= 0.05 & fm_diff_int_p > 0.05)
 
@@ -165,7 +172,13 @@ dat_slopes2 <-m_dat2 %>%
 
 dim(dat_slopes2) 
 
-#41 out of 130 traits sig intercept diff  same slope - scenario B
+######
+# B 
+######
+
+# 62 out of 181
+
+#40 out of 129 traits sig intercept diff  same slope - scenario B
 dat_int1<- dat1 %>%
   filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p >0.05)
 dim(dat_int1) 
@@ -175,6 +188,12 @@ dat_int2 <-m_dat2 %>%
   filter (merged_p_int <= 0.05 & merged_p_slp > 0.05)
 
 dim(dat_int2) 
+
+######
+# C
+######
+
+# 68 out of 181
 
 #56 out of 130 sig intercept and slope diff - scenario C
 dat_intSlopes1<-dat1 %>%
@@ -187,6 +206,11 @@ dat_intSlopes2 <-m_dat2 %>%
 
 dim(dat_intSlopes2) 
 
+######
+# D
+######
+
+# 43 out of 181
 
 #26 no sig difference between intercept and slope - scenario D
 dat_intslopesNS1<- dat1 %>%
@@ -199,8 +223,9 @@ dat_intslopesNS2 <-m_dat2 %>%
 
 dim(dat_intslopesNS2) 
 
-# TODO 
-
+##########
+# TODO  - re-ceating Figure 1
+#########
 #rbind the above scenarios into one matrix with identifier letter A,B,C,D
 ScenarioA<-Fin_dat_slopes %>% add_column(Scen="A")
 ScenarioB<-Fin_dat_int %>% add_column(Scen="B")
