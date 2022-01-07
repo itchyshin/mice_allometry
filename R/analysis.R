@@ -9,6 +9,14 @@ library(tidyverse)
 library(here)
 library(poolr)
 
+# > citation("poolr")
+# 
+# To cite package ‘poolr’ in publications use:
+#   
+#   Ozan Cinar and Wolfgang Viechtbauer (2021). poolr: Methods for Pooling P-Values
+# from (Dependent) Tests. R package version 1.0-0.
+# https://CRAN.R-project.org/package=poolr
+
 # first getting p values - contrast between males and females for 
 
 dat <-read_csv(here("data/data_parameters.csv"))
@@ -24,6 +32,8 @@ dat %>% mutate(lnVR = log(f_sd/m_sd) + 1/(2*(f_n-1)) - 1/(2*(m_n-1)),
                t_val_sd = lnVR/sqrt(VlnVR),
                p_val_sd = 2*(1-pt(abs(t_val_sd), f_n-1 + m_n-1))
                            ) -> dat
+
+#write_csv(dat, here("data/data_parameters2.csv"))
 
 # signifcantly different 
 length(which(dat$p_val_sd <= 0.05))
