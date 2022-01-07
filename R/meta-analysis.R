@@ -77,6 +77,9 @@ r2_ml(model1a)
 
 orchard_plot(model1a, mod = "Category", xlab = "Difference in standarised intercepts  (F-M)", angle = 45, cb = F)
 
+
+
+
 ####################
 # slope difference
 ######################
@@ -157,6 +160,10 @@ fit_3 <- brm(mod_lnsd + mod_lnslp + mod_lnint,
 )
 
 summary(fit_3)
+
+# saving the model
+
+
 
 ###########################
 # non-absolute effect sizes
