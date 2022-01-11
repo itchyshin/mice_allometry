@@ -233,9 +233,11 @@ dat_intslopesNS2 <-m_dat2 %>%
 
 dim(dat_intslopesNS2) 
 
-##########
-# TODO  - re-ceating Figure 1
-#########
+
+##############################
+# TODO  - re-creating Figure 2
+################################
+
 #rbind the above scenarios into one matrix with identifier letter A,B,C,D
 ScenarioA<-Fin_dat_slopes %>% add_column(Scen="A")
 ScenarioB<-Fin_dat_int %>% add_column(Scen="B")

@@ -1,5 +1,8 @@
 # meta-analysis
 
+# info about colour blind cour
+# https://stackoverflow.com/questions/57153428/r-plot-color-combinations-that-are-colorblind-accessible
+
 #devtools::install_github("itchyshin/orchard_plot", subdir = "orchaRd", force = TRUE, build_vignettes = TRUE)
 
 library(orchaRd)
@@ -7,6 +10,7 @@ library(tidyverse)
 library(here)
 library(metafor)
 library(brms)
+library(patchwork)
 
 
 # reading data
@@ -64,8 +68,16 @@ robust(modelia, cluster  =  dat$parameter_group)
 funnel(modelia)
 i2_ml(modelia)
 
-orchard_plot(modelia, mod = "Int", xlab = "Difference in standarised intercepts  (F-M)")
+cbpl <- c("#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
+          "#CC79A7", "#56B4E9", "#AA4499", "#DDCC77")
 
+point.size = 1.5
+
+p1 <- orchard_plot2(modelia, mod = "Int", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45, point.size = point.size) +
+  scale_y_discrete(labels = "Overall") +
+  scale_fill_manual(values = "#999999") +
+  scale_colour_manual(values = "#999999") +
+  xlim(c(-0.5, 1.5))
 
 # meta-regression
 model1a <- rma.mv(yi = abs_int, V= V_abs_int, mod = ~ Category - 1,
@@ -75,10 +87,10 @@ summary(model1a)
 robust(model1a, cluster  =  dat$parameter_group)
 r2_ml(model1a)
 
-orchard_plot(model1a, mod = "Category", xlab = "Difference in standarised intercepts  (F-M)", angle = 45, cb = F)
-
-
-
+p2 <- orchard_plot2(model1a, mod = "Category", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45,  point.size = point.size) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  xlim(c(-0.5, 1.5))
 
 ####################
 # slope difference
@@ -93,7 +105,11 @@ robust(modelsa, cluster  =  dat$parameter_group)
 funnel(modelsa)
 i2_ml(modelia)
 
-orchard_plot(modelsa, mod = "Int", xlab = "Difference in standarised intercepts  (F-M)")
+p3 <- orchard_plot2(modelsa, mod = "Int", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45,  point.size = point.size) +
+  scale_y_discrete(labels = "") +
+  scale_fill_manual(values = "#999999") +
+  scale_colour_manual(values = "#999999") +
+  xlim(c(-1.5, 10))
 
 # meta-regression
 model2a <- rma.mv(yi = abs_slope, V= V_abs_slope,
@@ -104,7 +120,11 @@ summary(model2a)
 robust(model2a, cluster  =  dat$parameter_group)
 r2_ml(model2a)
 
-orchard_plot(model2a, mod = "Category", xlab = "Difference in standarised intercepts  (F-M)", angle = 45, cb = F)
+p4 <- orchard_plot2(model2a, mod = "Category", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45, cb = F,  point.size = point.size) + 
+  scale_y_discrete(labels = rep("", 9)) +
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  xlim(c(-1.5, 10))
 
 #################
 # sd difference
@@ -118,8 +138,11 @@ robust(modelsda, cluster  =  dat$parameter_group)
 funnel(modelsda)
 i2_ml(modelsda)
 
-orchard_plot(modelsda, mod = "Category", xlab = "Relative difference in SD (lnVR: F/M)", angle = 45, cb = F)
-
+p5 <- orchard_plot2(modelsda, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45,  point.size = point.size) +
+  scale_y_discrete(labels = "") +
+  scale_fill_manual(values = "#999999") +
+  scale_colour_manual(values = "#999999") +
+  xlim(c(-0.2, 1.9))
 
 # meta-regression
 model3a <- rma.mv(yi = abs_lnVR, V= V_abs_lnVR, mod = ~ Category - 1,
@@ -128,8 +151,17 @@ model3a <- rma.mv(yi = abs_lnVR, V= V_abs_lnVR, mod = ~ Category - 1,
 summary(model3a)
 r2_ml(model3a)
 
+p6 <- orchard_plot2(model3a, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45, cb = F,  point.size = point.size) + 
+  scale_y_discrete(labels = rep("", 9)) +
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  xlim(c(-0.2, 1.9))
 
-orchard_plot(model3a, mod = "Category", xlab = "Relative difference in SD (lnVR: F/M)", angle = 45, cb = F)
+###############
+# Fig 3
+###############
+
+(p1 + p3 + p5) / (p2 + p4 + p6)  + plot_layout(heights = c(1, 4)) + plot_annotation(tag_levels = 'A')
 
 ######
 # it seems like best to log it for we can
@@ -148,22 +180,75 @@ plot(log(dat$abs_slope), log(dat$abs_lnVR))
 #  try - brms
 #########
 
-# trivariate model
+# tri-variate model
+# TODO rerun this model!!
 
-mod_lnsd <- bf(log(abs_lnVR) | se(sqrt(V_abs_int)/abs_lnVR)  ~ - 1 +  Category+ (1|q|parameter_group))
+mod_lnsd <- bf(log(abs_lnVR) | se(sqrt(V_abs_lnVR)/abs_lnVR)  ~ - 1 +  Category+ (1|q|parameter_group))
 mod_lnslp <- bf(log(abs_slope) | se(sqrt(V_abs_slope)/abs_slope)  ~  - 1 +  Category + (1|q|parameter_group))
 mod_lnint <- bf(log(abs_int) | se(sqrt(V_abs_int)/abs_int)  ~  - 1 +  Category + (1|q|parameter_group))
 
-fit_3 <- brm(mod_lnsd + mod_lnslp + mod_lnint, 
-                 data = dat, 
-                 chains = 2, cores = 2, iter = 4000, warmup = 1000
-)
+# fit_3 <- brm(mod_lnsd + mod_lnslp + mod_lnint, 
+#                  data = dat, 
+#                  chains = 2, cores = 2, iter = 4000, warmup = 1000
+# )
 
 summary(fit_3)
 
 # saving the model
+saveRDS(fit_3, file = here("data", "fit_3.rds"))
 
 
+# creating added precisoin
+
+dat %>%  mutate(pre_slp_int = 1/sqrt(V_abs_int/abs_int^2 + V_abs_slope/abs_slope^2),
+                pre_slp_sd =  1/sqrt(V_abs_slope/abs_slope^2 + V_abs_lnVR/abs_lnVR^2),
+                pre_int_sd = 1/sqrt(V_abs_int/abs_int^2 + V_abs_lnVR/abs_lnVR^2)
+) -> dat 
+
+
+f1 <- ggplot(data = dat) +
+  geom_point(aes(x = log(abs_slope), y = log(abs_int), col = Category, size = pre_slp_int)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(x = "ln(Absolute difference in standardized slopes)" , y = "ln(Absolute difference in standardized intercepts)")+
+  labs(color='Trait types', size = "Precison") +
+  annotate(geom="text", x=1.5, y = -5, label="r = 0.52 [0.38, 0.65]", size = 3)+
+  theme_bw()  +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
+  guides(col = "none")
+  
+
+
+f2 <- ggplot(data = dat) +
+  geom_point(aes(x = log(abs_slope), y = log(abs_lnVR), col = Category, size = pre_slp_sd)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(x = "ln(Absolute difference in standardized slopes)" , y = "ln(Absolute relative difference in SD)") +
+  labs(color='Trait types', size = "Precison") +
+  annotate(geom="text", x=1.5, y = -4.8, label="r = 0.28 [009., 0.45]", size = 3)+
+  theme_bw()   +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
+  guides(col = "none")
+
+f3 <- ggplot(data = dat) +
+  geom_point(aes(x = log(abs_int), y = log(abs_lnVR), col = Category, size = pre_int_sd)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(x = "ln(Absolute difference in standardized intercepts)" , y = "ln(Absolute relative difference in SD)") +
+  labs(color='Trait types', size = "Precison") +
+  annotate(geom="text", x= - 0.5, y = -4.8, label="r = 0.13 [-0.04, 0.30]", size = 3)+
+  theme_bw() +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))
+
+
+
+
+f3/f2/f1  + plot_annotation(tag_levels = 'A')
+
+
+#################
+# Figure 4
+#################
 
 ###########################
 # non-absolute effect sizes
