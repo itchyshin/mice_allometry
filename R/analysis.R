@@ -11,6 +11,7 @@ library(metafor)
 library(tidyverse)
 library(here)
 library(poolr)
+library(patchwork)
 
 # > citation("poolr")
 # 
