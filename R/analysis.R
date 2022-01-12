@@ -1,6 +1,9 @@
 # analysis
-#TODO - need to get contrasts between male SD and female SD
-# TODO - sorting out to the scenario!!
+#TODO - need to get contrasts between male SD and female SD - done
+# TODO - sorting out to the scenario!! - done
+# TODO - questions (we do not use absolute values for this analysis - so you cannot really add and subtract; e.g. time spend in light or dark areas)
+# TODO - how to present adjusted version?? 
+# TODO - many of repeats can be made into functions
 
 # package
 library(purrr)
@@ -250,6 +253,10 @@ dat_add<-bind_rows(ScenarioA,ScenarioB,ScenarioC,ScenarioD)
 
 #for the traits with sig slope diffs (and sig and non-sig intercepts) assess sex bias in slopes
 
+# set colour for males and females
+
+colours <- c("#D55E00", "#009E73") # c("#882255","#E69F00") 
+
 #sex bias in slope parameter under scenario A
 dat_p1<-dat_slopes%>%
   group_by_at(vars(Category)) %>%
@@ -267,10 +274,24 @@ dat_p1<-gather(as.data.frame(dat_p1),
                      factor_key = TRUE)
 
 
-dat_p1$samplesize<-with(meta.plot1df, 
+dat_p1$samplesize<-with(dat_p1, 
                         ifelse(sex == "malepercent", malebias, femalebias) )
 
-colours <- c("#009E73", "#D55E00") # c("#882255","#E69F00") 
+# Adding All
+dat_p1 %>%  group_by(sex) %>% summarise(malebias = sum(malebias), 
+                                        femalebias= sum(femalebias),
+                                        total = sum(total),
+                                        ) -> part
+
+part %>% mutate(Category = "All",
+                sex = c("malepercent", "femalepercent"),
+                percent = c(100*(malebias[1]/total[1]), 100*(femalebias[1]/total[1])),
+                samplesize = c(malebias[1] ,  femalebias[1]))-> part
+
+  
+  #select(Category, malebias, femalebias, total, sex, percent, samplesize)
+dat_p1 <- bind_rows(dat_p1, part)
+
 
 
 p1 <- 
@@ -316,8 +337,24 @@ dat_p2<-gather(as.data.frame(dat_p2),
                value = percent, 
                malepercent:femalepercent, 
                factor_key = TRUE)
+
 dat_p2$samplesize<-with(dat_p2, 
                               ifelse(sex == "malepercent", malebias, femalebias) )
+
+# addeing All
+dat_p2 %>%  group_by(sex) %>% summarise(malebias = sum(malebias), 
+                                        femalebias= sum(femalebias),
+                                        total = sum(total),
+) -> part2
+
+part2 %>% mutate(Category = "All",
+                sex = c("malepercent", "femalepercent"),
+                percent = c(100*(malebias[1]/total[1]), 100*(femalebias[1]/total[1])),
+                samplesize = c(malebias[1] ,  femalebias[1]))-> part2
+
+
+#select(Category, malebias, femalebias, total, sex, percent, samplesize)
+dat_p2 <- bind_rows(dat_p2, part2)
 
 
 p2 <- 
@@ -362,6 +399,22 @@ dat_p3<-gather(as.data.frame(dat_p3),
                      factor_key = TRUE)
 dat_p3$samplesize<-with(dat_p3, 
                               ifelse(sex == "malepercent", malebias, femalebias) )
+
+
+# addeing All
+dat_p3 %>%  group_by(sex) %>% summarise(malebias = sum(malebias), 
+                                        femalebias= sum(femalebias),
+                                        total = sum(total),
+) -> part3
+
+part3 %>% mutate(Category = "All",
+                 sex = c("malepercent", "femalepercent"),
+                 percent = c(100*(malebias[1]/total[1]), 100*(femalebias[1]/total[1])),
+                 samplesize = c(malebias[1] ,  femalebias[1]))-> part3
+
+
+#select(Category, malebias, femalebias, total, sex, percent, samplesize)
+dat_p3 <- bind_rows(dat_p3, part3)
 
 p3 <- 
   ggplot(dat_p3) +
@@ -413,6 +466,22 @@ dat_p4$samplesize<-with(dat_p4,
                         ifelse(sex == "malepercent", malebias, femalebias) )
 
 
+# addeing All
+dat_p4 %>%  group_by(sex) %>% summarise(malebias = sum(malebias), 
+                                        femalebias= sum(femalebias),
+                                        total = sum(total),
+) -> part4
+
+part4 %>% mutate(Category = "All",
+                 sex = c("malepercent", "femalepercent"),
+                 percent = c(100*(malebias[1]/total[1]), 100*(femalebias[1]/total[1])),
+                 samplesize = c(malebias[1] ,  femalebias[1]))-> part4
+
+
+#select(Category, malebias, femalebias, total, sex, percent, samplesize)
+dat_p4 <- bind_rows(dat_p4, part4)
+
+
 p4 <- 
   ggplot(dat_p4) +
   aes(x = Category, y = percent, fill = sex) +
@@ -439,7 +508,7 @@ p4 <-
         #axis.title.x = element_blank()  ) +
   ylab("Percentage (%)") +
   coord_flip() +
-  labs(title = "Statistically signficant \n     sex bias in residual SD") 
+  labs(title = "Statistically signficant \n sex difference in residual SD") 
 
 (p1 + p2) / (p3 + p4) +   plot_annotation(tag_levels = 'A')
 
