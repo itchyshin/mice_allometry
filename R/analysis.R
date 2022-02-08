@@ -320,7 +320,7 @@ p1 <-
         axis.title.x = element_blank(),
         axis.title.y = element_blank()  ) +
   coord_flip()  +
-  labs(title = "Sceneario A - different slopes, \n                        same intercept")
+  labs(title = "Scenario A - different slopes, \n                        same intercept")
 
 
 
@@ -383,7 +383,7 @@ p2 <-
         axis.title.x = element_blank(),
         axis.title.y = element_blank()  ) +
   coord_flip() +
-  labs(title = "Sceneario B - same slopes, \n                different intercept")
+  labs(title = "Scenario B - same slopes, \n                different intercept")
 
 
 #sex bias in sig intercept and slope parameter - scenario C
@@ -443,7 +443,7 @@ p3 <-
   #axis.title.x = element_blank()  ) +
   ylab("Percentage (%)") +
   coord_flip() +
-  labs(title = "Sceneario C - different slopes, \n                    different intercept") 
+  labs(title = "Scenario C - different slopes, \n                    different intercept") 
 
 
 #sex bias in sd 
