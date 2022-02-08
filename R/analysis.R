@@ -320,7 +320,7 @@ p1 <-
         axis.title.x = element_blank(),
         axis.title.y = element_blank()  ) +
   coord_flip()  +
-  labs(title = "Sceneario A - different slopes, \n                        same intercept")
+  labs(title = "Scenario A - different slopes, \n                      same intercepts")
 
 
 
@@ -383,7 +383,7 @@ p2 <-
         axis.title.x = element_blank(),
         axis.title.y = element_blank()  ) +
   coord_flip() +
-  labs(title = "Sceneario B - same slopes, \n                different intercept")
+  labs(title = "Scenario B - same slopes, \n              different intercepts")
 
 
 #sex bias in sig intercept and slope parameter - scenario C
@@ -443,12 +443,12 @@ p3 <-
   #axis.title.x = element_blank()  ) +
   ylab("Percentage (%)") +
   coord_flip() +
-  labs(title = "Sceneario C - different slopes, \n                    different intercept") 
+  labs(title = "Scenario C - different slopes, \n                  different intercepts") 
 
 
 #sex bias in sd 
 
-dat_p4<-dat%>%
+dat_p4<-dat%>% filter(p_val_sd <= 0.05) %>% 
   group_by_at(vars(Category)) %>%
   summarise(malebias = sum(m_sd > f_sd), 
             femalebias = sum(f_sd > m_sd), 
@@ -482,7 +482,6 @@ part4 %>% mutate(Category = "All",
 #select(Category, malebias, femalebias, total, sex, percent, samplesize)
 dat_p4 <- bind_rows(dat_p4, part4)
 
-
 p4 <- 
   ggplot(dat_p4) +
   aes(x = Category, y = percent, fill = sex) +
@@ -509,7 +508,7 @@ p4 <-
         #axis.title.x = element_blank()  ) +
   ylab("Percentage (%)") +
   coord_flip() +
-  labs(title = "Statistically signficant \n sex difference in residual SD") 
+  labs(title = "Statistically significant \n sex difference in residual SDs") 
 
 (p1 + p2) / (p3 + p4) +   plot_annotation(tag_levels = 'A')
 
