@@ -59,7 +59,7 @@ dim(dat_int)
 
 #77 out of 297 sig intercept and slope diff - scenario C
 dat_intSlopes<-dat %>%
-  filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p <0.05)
+  filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p <= 0.05)
 dim(dat_intSlopes) 
 
 #101 no sig difference between intercept and slope - scenario D
@@ -387,10 +387,10 @@ p2 <-
 
 
 #sex bias in sig intercept and slope parameter - scenario C
-
+# TODO we need to fix this needs to be resolved
 dat_p3<-dat_intSlopes%>%
   group_by_at(vars(Category)) %>%
-  summarise(malebias = sum(m_intercept > f_intercept,m_slope > f_slope), femalebias = sum(f_intercept > m_intercept, f_slope > m_slope), total= malebias + femalebias, 
+  summarise(malebias = sum(m_intercept > f_intercept, m_slope > f_slope), femalebias = sum(f_intercept > m_intercept, f_slope > m_slope), total= malebias + femalebias, 
             malepercent = malebias*100/total, femalepercent = femalebias*100/total)  
 
 dat_p3<-gather(as.data.frame(dat_p3), 
