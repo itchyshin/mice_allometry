@@ -5,13 +5,15 @@
 
 #devtools::install_github("itchyshin/orchard_plot", subdir = "orchaRd", force = TRUE, build_vignettes = TRUE)
 
-library(orchaRd)
+#library(orchaRd)
 library(tidyverse)
 library(here)
 library(metafor)
 library(brms)
 library(patchwork)
 
+# loading functions
+source(here("R/functions.R"), chdir = TRUE)
 
 # reading data
 # TODO data from Laura had a typo - fm_diiff_slope_se (fixed)

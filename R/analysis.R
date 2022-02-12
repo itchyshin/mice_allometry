@@ -257,6 +257,7 @@ dat_add<-bind_rows(ScenarioA,ScenarioB,ScenarioC,ScenarioD)
 # set colour for males and females
 
 colours <- c("#D55E00", "#009E73") # c("#882255","#E69F00") 
+colours2 <-c("#D55E00", "#7D26CD", "#009E73")
 
 #sex bias in slope parameter under scenario A
 dat_p1<-dat_slopes%>%
@@ -390,8 +391,14 @@ p2 <-
 # TODO we need to fix this needs to be resolved
 dat_p3<-dat_intSlopes%>%
   group_by_at(vars(Category)) %>%
-  summarise(malebias = sum(m_intercept > f_intercept, m_slope > f_slope), femalebias = sum(f_intercept > m_intercept, f_slope > m_slope), total= malebias + femalebias, 
-            malepercent = malebias*100/total, femalepercent = femalebias*100/total)  
+  summarise(malebias = sum(m_intercept > f_intercept & m_slope > f_slope), 
+            mixed = sum(m_intercept > f_intercept & m_slope < f_slope, 
+                        m_intercept < f_intercept & m_slope > f_slope),
+            femalebias = sum(f_intercept > m_intercept & f_slope > m_slope), 
+            total= malebias + mixed + femalebias, 
+            malepercent = malebias*100/total, 
+            mixedpercent = mixed*100/total,
+            femalepercent = femalebias*100/total)  
 
 dat_p3<-gather(as.data.frame(dat_p3), 
                      key = sex, 
@@ -399,19 +406,20 @@ dat_p3<-gather(as.data.frame(dat_p3),
                      malepercent:femalepercent, 
                      factor_key = TRUE)
 dat_p3$samplesize<-with(dat_p3, 
-                              ifelse(sex == "malepercent", malebias, femalebias) )
+                              ifelse(sex == "malepercent", malebias, ifelse(sex == "mixedpercent", mixed, femalebias)) )
 
 
 # addeing All
 dat_p3 %>%  group_by(sex) %>% summarise(malebias = sum(malebias), 
+                                        mixed = sum(mixed),
                                         femalebias= sum(femalebias),
                                         total = sum(total),
 ) -> part3
 
 part3 %>% mutate(Category = "All",
-                 sex = c("malepercent", "femalepercent"),
-                 percent = c(100*(malebias[1]/total[1]), 100*(femalebias[1]/total[1])),
-                 samplesize = c(malebias[1] ,  femalebias[1]))-> part3
+                 sex = c("malepercent", "mixedpercent", "femalepercent"),
+                 percent = c(100*(malebias[1]/total[1]), 100*(mixed[1]/total[1]), 100*(femalebias[1]/total[1])),
+                 samplesize = c(malebias[1] , mixed[1], femalebias[1]))-> part3
 
 
 #select(Category, malebias, femalebias, total, sex, percent, samplesize)
@@ -425,7 +433,7 @@ p3 <-
   geom_text(data = subset(dat_p3, samplesize != 0), aes(label = samplesize), position = position_stack(vjust = .5), 
             color = "white", size = 3.5) +
   
-  scale_fill_manual(values = colours) + 
+  scale_fill_manual(values = colours2) + 
   theme_bw(base_size = 18) +
   theme(strip.text.y = element_text(angle = 270, size = 10, margin = margin(t=15, r=15, b=15, l=15)), 
         strip.text.x = element_text(size = 12),
