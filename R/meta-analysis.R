@@ -12,6 +12,8 @@ library(metafor)
 library(brms)
 library(patchwork)
 
+#TODO - we should really renames or provide meta-data on what all column names mean (at the moment all very confusing)
+
 # loading functions
 source(here("R/functions.R"), chdir = TRUE)
 

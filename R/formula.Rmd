@@ -1,0 +1,16 @@
+---
+title: "formula"
+author: "Shinichi Nakagawa"
+date: "14/02/2022"
+output: word_document
+---
+
+$$
+\text{ES}_{folded} = \text{SE}\sqrt{\frac{2}{\pi}} \exp\left({\frac{\text{ES}^2}{2\text{SE}^2}}\right)+\text{ES}\left[1-2\Phi\left(-\frac{\text{ES}}{\text{SE}}\right) \right]
+$$
+$$
+\text{SE}^2_{folded} = \text{ES}^2 + \text{SE}^2 - \text{ES}_{folded}^2
+$$
+
+
+
