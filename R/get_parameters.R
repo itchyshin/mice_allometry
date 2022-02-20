@@ -35,15 +35,14 @@ get_parmetersN<- function(i){
   
   ln_c_weight <- groupScale(log(i[["weight"]]) ~ i[["sex"]])
   i[,"ln_c_weight"] <- ln_c_weight
-  
   model_f <- lme((scale(log(data_point))) ~ sex*ln_c_weight, 
-                 random = ~ 1|metadata_group,
+                 random = ~ 1|date_of_experiment/metadata_group,
                  weights = varIdent(form = ~1 | sex),
                  control = lmeControl(opt = "optim"),
                  data = i)
   
   model_m <- lme((scale(log(data_point))) ~ relevel(sex, ref = "male")*ln_c_weight, 
-                 random = ~ 1|metadata_group,
+                 random = ~ 1|date_of_experiment/metadata_group,
                  weights = varIdent(form = ~1 | sex),
                  control = lmeControl(opt = "optim"),
                  data = i)
@@ -100,8 +99,27 @@ dat_list <- readRDS(here("data/dat_list.rds"))
 dat_category<-read_csv(here("data/cateogry_parameter2.csv")) 
 
 #run individual tests on single matrices extracted from dat_list
-testInd_dat1<- dat_list[[1]] #male is 1
-res1<-get_parmetersN(testInd_dat1) # this works
+testInd_dat1<- dat_list[[8]] #male is 1
+#res1<-get_parmetersN(testInd_dat1) # this works
+
+
+# test
+ln_c_weight <- groupScale(log(testInd_dat1[["weight"]]) ~ testInd_dat1[["sex"]])
+testInd_dat1[,"ln_c_weight"] <- ln_c_weight
+batch <- base::paste0(testInd_dat1[["metadata_group"]], testInd_dat1[["date_of_experiment"]] )
+testInd_dat1[,"batch"] <- ln_c_weight
+
+model_test <- lme((scale(log(data_point))) ~ sex*ln_c_weight, 
+               random = list(metadata_group = ~ ln_c_weight, date_of_experiment = ~ 1),
+               weights = varIdent(form = ~1 | sex),
+               control = lmeControl(opt = "optim"),
+               data = testInd_dat1)
+summary(model_test)
+
+# getting all we want
+test_females <- broom.mixed::tidy(model_test)
+
+
 
 # more tests
 # 
