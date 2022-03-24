@@ -1,0 +1,300 @@
+---
+title: "Sex differences in allometry for phenotypic traits indicate that females are not scaled males"
+authors: "Laura A. B. Wilson, Susanne R. K. Zajitschek, Malgorzata Lagisz, Jeremy Mason, Hamed Haselimashhadi and Shinichi Nakagawa"
+subtitle: "Supporting Information"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: 
+    
+    rmdformats::readthedown:
+      code_folding: hide
+      code_download: true
+      toc_depth: 4
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+message = FALSE,
+warning = FALSE,
+cache = TRUE, 
+tidy = TRUE, 
+echo = TRUE
+)
+
+rm(list = ls())
+```
+
+# Setting-up {.tabset}
+
+## Loading packages
+
+```{r, cache = FALSE}
+# older version of the ochaRd package
+#devtools::install_github("itchyshin/orchard_plot", subdir = "orchaRd", force = TRUE, build_vignettes = TRUE)
+
+library(orchaRd)
+library(patchwork)
+library(tidyverse)
+library(metafor)
+
+pacman::p_load(tidyverse,
+               purrr,
+               metafor, 
+               poolr,
+               patchwork,
+               orchaRd, # older version: 
+               broom.mixed,
+               here,
+               nlme)
+
+```
+
+## Loading custum functions
+
+This loads the unprocessed data file and custom functions including
+
+-   functions for calculating 'focal' effect sizes and variance for lnRR and SMD: `effect_set`
+-   functions for calculating 'pairwise' comparisons (lnRR) and variance: `effect_set2`
+-   functions for calculating 'focal' effect sizes and variance for lnRR without arcsine transformation: `effect_setb`
+-   functions for calculating pair-wise contrasts between moderators: `contrast_fun`
+
+```{r}
+# custom function  for within-group cenering (or z transformation)
+groupScale <- function(formula, data=NULL, center=TRUE, scale=FALSE){
+  if(is.null(data)) data <- model.frame(formula)
+  scaled <- rep(NA,nrow(data)) #empty vector
+  for(i in unique(data[,2])){
+    elements <- which(data[,2]==i)
+    scaled[elements] <- scale(data[elements,1], scale=scale, center=center) 
+  }
+  return(scaled)
+}
+
+
+
+# function to get what we need from these 2 models (you can include models in this function as well)
+get_parmetersN<- function(i){
+  
+  # centering weights separately for each 
+  
+  ln_c_weight <- groupScale(log(i[["weight"]]) ~ i[["sex"]])
+  i[,"ln_c_weight"] <- ln_c_weight
+  model_f <- lme((scale(log(data_point))) ~ sex*ln_c_weight, 
+                 random = list(metadata_group = ~ ln_c_weight, date_of_experiment = ~ 1),
+                 weights = varIdent(form = ~1 | sex),
+                 control = lmeControl(opt = "optim"),
+                 data = i)
+  
+  model_m <- lme((scale(log(data_point))) ~ relevel(sex, ref = "male")*ln_c_weight, 
+                 random = list(metadata_group = ~ ln_c_weight, date_of_experiment = ~ 1),
+                 weights = varIdent(form = ~1 | sex),
+                 control = lmeControl(opt = "optim"),
+                 data = i)
+  # getting all we want
+  females <- broom.mixed::tidy(model_f)
+  males <- broom.mixed::tidy(model_m)
+  # gets variance weights
+  weights <- attr(model_f$modelStruct$varStruct, "weights")
+  male_correction <- 1/weights[which(names(weights) == "male")[1]]
+  female_correction <- 1/weights[which(names(weights) == "female")[1]]
+  
+  # get parameters
+  parameter_name <- tolower(i[["parameter_name"]][1])
+  m_n <- sum(i[["sex"]] == "male") # sample size for males 
+  f_n <- sum(i[["sex"]] == "female") # N fo females
+  f_intercept <- as.numeric(females[1, 4])
+  f_intercept_se <- as.numeric(females[1, 5])
+  f_slope <- as.numeric(females[3, 4])
+  f_slope_se <- as.numeric(females[3, 5])
+  m_intercept <- as.numeric(males[1, 4])
+  m_intercept_se <- as.numeric(males[1, 5])
+  m_slope  <- as.numeric(males[3, 4])
+  m_slope_se  <- as.numeric(males[3, 5])
+  fm_diff_int  <- as.numeric(males[2, 4])
+  fm_diff_int_se  <- as.numeric(males[2, 5])
+  fm_diff_int_p  <- as.numeric(males[2, 8])
+  fm_diff_slope <- as.numeric(males[4, 4])
+  fm_diff_slope_se <- as.numeric(males[4, 5])
+  fm_diff_slope_p <- as.numeric(males[4, 8])
+  group_sd <- as.numeric(VarCorr(model_f)[,2][2])
+  g_slope_sd <- as.numeric(VarCorr(model_f)[,2][3])
+  batch_sd <- as.numeric(VarCorr(model_f)[,2][5])
+  f_sd <- as.numeric(VarCorr(model_f)[,2][6])*female_correction
+  m_sd <- as.numeric(VarCorr(model_f)[,2][6])*male_correction
+  
+  
+  # putting it together
+  paras <- c(parameter_name, f_n, m_n, f_intercept, f_intercept_se, f_slope, f_slope_se, 
+             m_intercept, m_intercept_se, m_slope, m_slope_se, 
+             fm_diff_int, fm_diff_int_se, fm_diff_int_p,
+             fm_diff_slope, fm_diff_slope_se, fm_diff_slope_p,
+             group_sd, g_slope_sd, batch_sd, f_sd, m_sd)
+  names(paras) <- c('parameter_name','f_n', 'm_n','f_intercept', 'f_intercept_se', 'f_slope', 'f_slope_se', 
+                    'm_intercept', 'm_intercept_se', 'm_slope', 'm_slope_se', 
+                    'fm_diff_int', 'fm_diff_int_se', 'fm_diff_int_p',
+                    'fm_diff_slope', 'fm_diff_slope_se', 'fm_diff_slope_p',
+                    'group_sd', 'g_slope_sd', 'batch_sd',  'f_sd', 'm_sd')
+  invisible(paras)
+  
+}
+
+
+# creating orchard plots
+
+orchard_plot2 <- function (object, mod = "Int", xlab, N = "none", alpha = 0.5, 
+          angle = 90, cb = FALSE, k = TRUE, transfm = c("none", "tanh"), point.size = 3,
+          condition.lab = "Condition") 
+{
+  transfm <- match.arg(transfm)
+  if (any(class(object) %in% c("rma.mv", "rma"))) {
+    if (mod != "Int") {
+      object <- mod_results(object, mod)
+    }
+    else {
+      object <- mod_results(object, mod = "Int")
+    }
+  }
+  mod_table <- object$mod_table
+  data <- object$data
+  data$moderator <- factor(data$moderator, levels = mod_table$name, 
+                           labels = mod_table$name)
+  data$scale <- (1/sqrt(data[, "vi"]))
+  legend <- "Precision (1/SE)"
+  if (any(N != "none")) {
+    data$scale <- N
+    legend <- "Sample Size (N)"
+  }
+  if (transfm == "tanh") {
+    cols <- sapply(mod_table, is.numeric)
+    mod_table[, cols] <- Zr_to_r(mod_table[, cols])
+    data$yi <- Zr_to_r(data$yi)
+    label <- xlab
+  }
+  else {
+    label <- xlab
+  }
+  mod_table$K <- as.vector(by(data, data[, "moderator"], function(x) length(x[, 
+                                                                              "yi"])))
+  group_no <- length(unique(mod_table[, "name"]))
+  cbpl <- c("#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
+            "#CC79A7", "#56B4E9", "#999999")
+  if (names(mod_table)[2] == "condition") {
+    condition_no <- length(unique(mod_table[, "condition"]))
+    plot <- ggplot2::ggplot() + ggbeeswarm::geom_quasirandom(data = data, 
+                                                             ggplot2::aes(y = yi, x = moderator, size = scale, 
+                                                                          colour = moderator), alpha = alpha) + ggplot2::geom_hline(yintercept = 0, 
+                                                                                                                                    linetype = 2, colour = "black", alpha = alpha) + 
+      ggplot2::geom_linerange(data = mod_table, ggplot2::aes(x = name, 
+                                                             ymin = lowerCL, ymax = upperCL), size = 1.2, 
+                              position = ggplot2::position_dodge2(width = 0.3)) + 
+      ggplot2::geom_pointrange(data = mod_table, ggplot2::aes(y = estimate, 
+                                                              x = name, ymin = lowerPR, ymax = upperPR, shape = as.factor(condition), 
+                                                              fill = name), size = 0.5, position = ggplot2::position_dodge2(width = 0.3)) + 
+      ggplot2::scale_shape_manual(values = 20 + (1:condition_no)) + 
+      ggplot2::coord_flip() + ggplot2::theme_bw() + ggplot2::guides(fill = "none", 
+                                                                    colour = "none") + ggplot2::theme(legend.position = c(0, 
+                                                                                                                          1), legend.justification = c(0, 1)) + ggplot2::theme(legend.title = ggplot2::element_text(size = 9)) + 
+      ggplot2::theme(legend.direction = "horizontal") + 
+      ggplot2::theme(legend.background = ggplot2::element_blank()) + 
+      ggplot2::labs(y = label, x = "", size = legend) + 
+      ggplot2::labs(shape = condition.lab) + ggplot2::theme(axis.text.y = ggplot2::element_text(size = 10, 
+                                                                                                colour = "black", hjust = 0.5, angle = angle))
+    plot <- plot + ggplot2::annotate("text", y = (max(data$yi) + 
+                                                    (max(data$yi) * 0.1)), x = (seq(1, group_no, 1) + 
+                                                                                  0.3), label = paste("italic(k)==", mod_table$K[1:group_no]), 
+                                     parse = TRUE, hjust = "right", size = 3.5)
+  }
+  else {
+    plot <- ggplot2::ggplot(data = mod_table, ggplot2::aes(x = estimate, 
+                                                           y = name)) + ggbeeswarm::geom_quasirandom(data = data, 
+                                                                                                     ggplot2::aes(x = yi, y = moderator, size = scale, 
+                                                                                                                  colour = moderator), groupOnX = FALSE, alpha = alpha) + 
+      ggplot2::geom_errorbarh(ggplot2::aes(xmin = lowerPR, 
+                                           xmax = upperPR), height = 0, show.legend = FALSE, 
+                              size = 0.5, alpha = 0.6) + ggplot2::geom_errorbarh(ggplot2::aes(xmin = lowerCL, 
+                                                                                              xmax = upperCL), height = 0, show.legend = FALSE, 
+                                                                                 size = 1.2) + ggplot2::geom_vline(xintercept = 0, 
+                                                                                                                   linetype = 2, colour = "black", alpha = alpha) + 
+      ggplot2::geom_point(ggplot2::aes(fill = name), size = point.size, 
+                          shape = 21) + ggplot2::theme_bw() + ggplot2::guides(fill = "none", 
+                                                                              colour = "none") + ggplot2::theme(legend.position = c(1, 
+                                                                                                                                    0), legend.justification = c(1, 0)) + ggplot2::theme(legend.title = ggplot2::element_text(size = 9)) + 
+      ggplot2::theme(legend.direction = "horizontal") + 
+      ggplot2::theme(legend.background = ggplot2::element_blank()) + 
+      ggplot2::labs(x = label, y = "", size = legend) + 
+      ggplot2::theme(axis.text.y = ggplot2::element_text(size = 10, 
+                                                         colour = "black", hjust = 0.5, angle = angle))
+    if (k == TRUE) {
+      plot <- plot + ggplot2::annotate("text", x = (max(data$yi) + 
+                                                      (max(data$yi) * 0.1)), y = (seq(1, group_no, 
+                                                                                      1) + 0.3), label = paste("italic(k)==", mod_table$K), 
+                                       parse = TRUE, hjust = "right", size = 3.5)
+    }
+  }
+  if (cb == TRUE) {
+    plot <- plot + ggplot2::scale_fill_manual(values = cbpl) + 
+      ggplot2::scale_colour_manual(values = cbpl)
+  }
+  return(plot)
+}
+
+
+```
+
+## Data organisation
+
+-  
+
+
+# Data exploration
+
+## General
+
+Number of effect sizes:
+
+**Fig. S1** Visual of missing data for each column. No missing data for moderators, random effects, or effect sizes.
+
+## Alluvial diagrams {.tabset}
+
+
+### Subjects info: species-strain-sex
+
+### Environmental enrichment info: age-exercise-social EE
+
+Figure corresponds to Fig. 2B in main text
+
+## code from Hamed
+
+```{r}
+par(mar = c(6, 6, 6, 6))
+v = c(57, 27, 16, 27, 25, 79, 9, 24, 33)
+t = c(
+ 'behaviour',
+ 'eye',
+ 'hearing',
+ 'heart',
+ 'hematology',
+ 'immunology',
+ 'metabolism',
+ 'morphology',
+ 'physiology'
+)
+d = data.frame(trait = t, n = v)
+d = d[order(d$n, decreasing = TRUE), ]
+barplot(
+ height = d$n,
+ names.arg = d$trait,
+ las = 3,
+ col = seq_along(d$trait) + 1,
+ ylim = c(0, 80)
+)
+```
+
+
+
+# Software and package versions
+
+```{r}
+sessionInfo() %>% pander()
+```
