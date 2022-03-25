@@ -1,7 +1,7 @@
 # script to get effect size estimates comparing females and males
 # TODO meta-data needs to be done!!
 
-# the data set contains 301 taits - but 4 duplicates
+# the data set contains 301 traits - but 4 duplicates
 
 # package
 library(nlme)

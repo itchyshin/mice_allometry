@@ -21,7 +21,7 @@ library(patchwork)
 # from (Dependent) Tests. R package version 1.0-0.
 # https://CRAN.R-project.org/package=poolr
 
-# first getting p values - contrast between males and females for 
+# first getting p values - the contrasts between males and females for 
 
 dat <-read_csv(here("data/data_parameters3.csv"))
 
