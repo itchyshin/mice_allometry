@@ -26,6 +26,8 @@ echo = TRUE
 rm(list = ls())
 ```
 
+The document mainly provide the description of the main dataset, and the R scripts and their outputs for the paper "Sex differences in allometry for phenotypic traits indicate that females are not scaled males". 
+
 # Setting-up {.tabset}
 
 ## Loading packages
@@ -439,7 +441,7 @@ dat %>% mutate(lnVR = log(f_sd/m_sd) + 1/(2*(f_n-3)) - 1/(2*(m_n-3)),
 write_csv(dat, here("data/data_parameters4.csv"))
 ```
 
-## Looking at our dataset
+## Dataset and meta-data
 
 ```{r}
 # loading data
@@ -452,9 +454,41 @@ dat <- dat %>% mutate_if(is.character, as.factor)
 kable(dat, "html") %>% 
   kable_styling("striped", position = "left") %>% 
   scroll_box(width = "100%", 
-    height = "500px")
+    height = "250px")
 
 ```
+
+- **parameter_name**: the name of phenotypic traits
+- **f_n**: the number of females for a particular trait
+- **m_n**: the number of males for a particular trait
+- **f_intercept**: the intercept (phenotypic mean) for females
+- **f_intercept_se**: standard error for the intercept (phenotypic mean) for females
+- **f_slope**: the slope for females
+- **f_slope_se**: standard error for the slope for females
+- **m_intercept**:  the intercept (phenotypic mean) for males
+- **m_intercept_se**: standard error for the intercept (phenotypic mean) for males
+- **m_slope**: the slope for males
+- **m_slope_se**: standard error for the slope for males
+- **fm_diff_int**: difference in intercepts between females and males
+- **fm_diff_int_se**: standard error for the difference in intercepts between females and males
+- **fm_diff_int_p**: p value associated with fm_diff_int
+- **fm_diff_slope**: difference in slopes between females and males
+- **fm_diff_slope_se**: standard error for for the difference in intercepts between females and males
+- **fm_diff_slope_p**: p value associated with fm_diff_slope
+- **group_sd**: the square-root of the variance component for "meta-data" group (see the text)
+- **g_slope_sd**: the square-root of the variance component for the random slope (weight)
+- **batch_sd**: the square-root of the variance component for "batch" (see the text)
+- **f_sd**: female residual standard deviation
+- **m_sd**: female residual standard deviation
+- **Category**: 9 function categories (see the text)
+- **parameter_group**: Grouping for non-independent traits
+- **lnVR**: log ratio between f_sd and m_sd
+- **VlnVR**: the sampling variance for lnVR
+- **low_lnVR**: lower confidence limit for lnVR
+- **high_lnVR**: upper confidence limit for lnVR
+- **t_val_sd**: t values associated with lnVR and VlnVR
+- **p_val_sd**: p values associated with lnVR and VlnVR
+- **obs**: unique observation level ID
 
 # Data analysis {.tabset}
 
@@ -976,7 +1010,6 @@ summary(modelia)
 # robust variance estimator
 robust(modelia, cluster  =  dat$parameter_group)
 
-#funnel(modelia)
 # I2 (heterogeneity)
 i2_ml(modelia)
 ```
@@ -1004,7 +1037,6 @@ modelsa <- rma.mv(yi = abs_slope, V= V_abs_slope,
 summary(modelsa) # not sig this means sometimes male is high other times female has steaper slops
 robust(modelsa, cluster  =  dat$parameter_group)
 
-funnel(modelsa)
 # I2 (heterogeneity)
 i2_ml(modelia)
 ```
@@ -1033,7 +1065,7 @@ modelsda <- rma.mv(yi = abs_lnVR, V= V_abs_lnVR,
                    data = dat)
 summary(modelsda)
 robust(modelsda, cluster  =  dat$parameter_group)
-funnel(modelsda)
+
 # I2 (heterogeneity)
 i2_ml(modelsda)
 ```
