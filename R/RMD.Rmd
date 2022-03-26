@@ -1082,11 +1082,6 @@ summary(model3a)
 r2_ml(model3a)
 ```
 
-
-```{r, echo = FALSE}
-include_graphics(here("fig", "Fig3.png"))
-```
-
 ## Obtaining correlations among intercepts, slopes and SDs
 
 ```{r, eval = FALSE}
@@ -1169,6 +1164,12 @@ p6 <- orchard_plot2(model3a, mod = "Category", xlab = "Absolute relative differe
 (p1 + p3 + p5) / (p2 + p4 + p6)  + plot_layout(heights = c(1, 4)) + plot_annotation(tag_levels = 'A')
 
 ```
+
+
+```{r, echo = FALSE}
+include_graphics(here("fig", "Fig3.png"))
+```
+
 
 **Fig. 3** Orchard plots illustrating results of multilevel meta-analyses (see the main text)
 
