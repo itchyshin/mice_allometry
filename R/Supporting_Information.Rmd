@@ -3,7 +3,6 @@ title: "Supporting Information: 'Sex differences in allometry for phenotypic tra
 subtitle: "Laura A. B. Wilson, Susanne R. K. Zajitschek, Malgorzata Lagisz, Jeremy Mason, Hamed Haselimashhadi & Shinichi Nakagawa" 
 #authors: 
 date: "`r format(Sys.time(), '%d %B %Y')`"
-
 output: 
     
     rmdformats::readthedown:
@@ -1103,7 +1102,7 @@ summary(fit_3b)
 #saveRDS(fit_3b, file = here("data", "fit_3b.rds"))
 ```
 
-```{r}
+```{r, echo = FALSE}
 fit_3b <- readRDS(here("data", "fit_3b.rds"))
 
 summary(fit_3b)
