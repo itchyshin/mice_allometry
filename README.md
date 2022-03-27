@@ -5,3 +5,5 @@
 Laura A. B. Wilson, Susanne R. K. Zajitschek, Malgorzata Lagisz, Jeremy Mason, Hamed Haselimashhadi & Shinichi Nakagawa
 
 Repository for data and R code for this work
+
+Check out [https://itchyshin.github.io/mice_allometry/]
