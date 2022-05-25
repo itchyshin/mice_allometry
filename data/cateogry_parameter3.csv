@@ -1,0 +1,376 @@
+﻿parameter_name,Category,parameter_group
+activity onset with respect to dark onset median,Behaviour,activity onset with respect to dark onset median
+average duration,Behaviour,average duration
+breath rate during sleep mean,Behaviour,breath rate during sleep mean
+breath rate during sleep standard deviation,Behaviour,breath rate during sleep standard deviation
+center average speed,Behaviour,center average speed
+center distance travelled,Behaviour,center distance travelled
+center permanence time,Behaviour,center time
+center resting time,Behaviour,center time
+conditioning baseline % freezing time,Behaviour,conditioning baseline freezing time
+conditioning baseline average motion index,Behaviour,conditioning baseline average motion index
+conditioning baseline freeze count,Behaviour,conditioning baseline freeze count
+conditioning baseline freezing time,Behaviour,conditioning baseline freezing time
+conditioning baseline maximum motion index,Behaviour,conditioning baseline maximum motion index
+conditioning post-shock % freezing time,Behaviour,conditioning post-shock freezing time
+conditioning post-shock average motion index,Behaviour,conditioning post-shock average motion index
+conditioning post-shock freeze count,Behaviour,conditioning post-shock freeze count
+conditioning post-shock freezing time,Behaviour,conditioning post-shock freezing time
+conditioning post-shock maximum motion index,Behaviour,conditioning post-shock maximum motion index
+conditioning shock average motion index,Behaviour,conditioning shock average motion index
+conditioning shock maximum motion index,Behaviour,conditioning shock maximum motion index
+conditioning shock minimum motion index,Behaviour,conditioning shock minimum motion index
+conditioning tone % freezing time,Behaviour,conditioning tone freezing time
+conditioning tone average motion index,Behaviour,conditioning tone average motion index
+conditioning tone freeze count,Behaviour,conditioning tone freeze count
+conditioning tone freezing time,Behaviour,conditioning tone freezing time
+conditioning tone maximum motion index,Behaviour,conditioning tone maximum motion index
+context % freezing time,Behaviour,context % freezing time
+context average motion index,Behaviour,context average motion index
+context freeze count,Behaviour,context freeze count
+context freezing time,Behaviour,context freezing time
+context maximum motion index,Behaviour,context maximum motion index
+cue baseline % freezing time,Behaviour,cue baseline % freezing time
+cue baseline average motion index,Behaviour,cue baseline average motion index
+cue baseline freeze count,Behaviour,cue baseline freeze count
+cue baseline freezing time,Behaviour,cue baseline freezing time
+cue baseline maximum motion index,Behaviour,cue baseline maximum motion index
+cue tone % freezing time,Behaviour,cue tone % freezing time
+dark side distance travelled,Behaviour,distance travelled
+dark side time spent,Behaviour,time spent
+dark sleep bout lengths mean,Behaviour,dark sleep bout lengths mean
+dark sleep bout lengths standard deviation,Behaviour,dark sleep bout lengths standard deviation
+data confidence level,Behaviour,data confidence level
+distance travelled - total,Behaviour,distance travelled - total
+fecal boli,Behaviour,fecal boli
+forelimb and hindlimb grip strength measurement mean,Behaviour,limb strength
+forelimb and hindlimb grip strength normalised against body weight,Behaviour,limb strength
+forelimb grip strength measurement mean,Behaviour,limb strength
+forelimb grip strength normalised against body weight,Behaviour,limb strength
+horizontal activity,Behaviour,horizontal activity
+latency to center entry,Behaviour,latency to center entry
+latency to fall mean,Behaviour,latency to fall mean
+latency to first transition into dark,Behaviour,latency to first transition into dark
+latency to immobility,Behaviour,latency to immobility
+learning difference,Behaviour,learning difference
+learning slope,Behaviour,learning slope
+light side distance travelled,Behaviour,distance travelled
+light side time spent,Behaviour,time spent
+light sleep bout lengths mean,Behaviour,light sleep bout lengths mean
+light sleep bout lengths standard deviation,Behaviour,light sleep bout lengths standard deviation
+locomotor activity,Behaviour,locomotor activity
+ma threshold inducing clonic seizure,Behaviour,ma threshold inducing clonic seizure
+peak wake with respect to dark onset median,Behaviour,peak wake with respect to dark onset median
+percent time in dark,Behaviour,percent time
+percent time in light,Behaviour,percent time
+percentage center time,Behaviour,percentage center time
+periphery average speed,Behaviour,periphery average speed
+periphery distance travelled,Behaviour,periphery distance travelled
+periphery permanence time,Behaviour,periphery time
+periphery resting time,Behaviour,periphery time
+repetitive beam break ('stereotypy counts'),Behaviour,repetitive beam break ('stereotypy counts')
+side changes,Behaviour,side changes
+sleep bout lengths mean,Behaviour,sleep bout lengths mean
+sleep bout lengths standard deviation,Behaviour,sleep bout lengths standard deviation
+sleep daily percent,Behaviour,sleep daily percent
+sleep dark phase percent,Behaviour,sleep phase percent
+sleep light phase percent,Behaviour,sleep phase percent
+time immobile,Behaviour,time immobile
+time mobile dark side,Behaviour,time mobile
+time mobile light side,Behaviour,time mobile
+total distance travelled,Behaviour,total distance travelled
+total holepokes,Behaviour,total holepokes
+vertical activity (rearing),Behaviour,vertical activity (rearing)
+whole arena average speed,Behaviour,whole arena average speed
+whole arena permanence,Behaviour,whole arena
+whole arena resting time,Behaviour,whole arena
+cone b-wave amplitude,Eye,cone b-wave amplitude
+cone b-wave amplitude-left,Eye,cone b-wave amplitude
+cone b-wave amplitude-right,Eye,cone b-wave amplitude
+cone b-wave implicit time,Eye,cone b-wave implicit time
+cone b-wave implicit time-left,Eye,cone b-wave implicit time
+cone b-wave implicit time-right,Eye,cone b-wave implicit time
+eye size,Eye,eye size
+eye size-left,Eye,eye size
+eye size-right,Eye,eye size
+interpupillary distance,Eye,interpupillary distance
+left anterior chamber depth,Eye,left anterior chamber depth
+left corneal thickness,Eye,corneal thickness
+left inner nuclear layer,Eye,inner nuclear layer
+left outer nuclear layer,Eye,outer nuclear layer
+left posterior chamber depth,Eye,posterior chamber depth
+left total retinal thickness,Eye,total retinal thickness
+max left eye lens density,Eye,max eye lens density
+max right eye lens density,Eye,max eye lens density
+mean left eye lens density,Eye,mean eye lens density
+mean right eye lens density,Eye,mean eye lens density
+min left eye lens density,Eye,min eye lens density
+min right eye lens density,Eye,min eye lens density
+right anterior chamber depth,Eye,anterior chamber depth
+right corneal thickness,Eye,corneal thickness
+right inner nuclear layer,Eye,inner nuclear layer
+right outer nuclear layer,Eye,outer nuclear layer
+right posterior chamber depth,Eye,posterior chamber depth
+right total retinal thickness,Eye,total retinal thickness
+rod a-wave amplitude,Eye,rod a-wave amplitude
+rod a-wave amplitude-left,Eye,rod a-wave amplitude
+rod a-wave implicit time,Eye,rod a-wave implicit time
+rod a-wave implicit time-left,Eye,rod a-wave implicit time
+rod a-wave implicit time-right,Eye,rod a-wave implicit time
+rod b-wave amplitude,Eye,rod b-wave amplitude
+rod b-wave amplitude-left,Eye,rod b-wave amplitude
+rod b-wave amplitude-right,Eye,rod b-wave amplitude
+rod b-wave implicit time,Eye,rod b-wave implicit time
+rod b-wave implicit time-left,Eye,rod b-wave implicit time
+rod b-wave implicit time-right,Eye,rod b-wave implicit time
+% pre-pulse inhibition - global,Hearing,pre-pulse inhibition
+% pre-pulse inhibition - ppi1,Hearing,pre-pulse inhibition
+% pre-pulse inhibition - ppi2,Hearing,pre-pulse inhibition
+% pre-pulse inhibition - ppi3,Hearing,pre-pulse inhibition
+% pre-pulse inhibition - ppi4,Hearing,pre-pulse inhibition
+12khz-evoked abr threshold,Hearing,abr threshold
+18khz-evoked abr threshold,Hearing,abr threshold
+24khz-evoked abr threshold,Hearing,abr threshold
+30khz-evoked abr threshold,Hearing,abr threshold
+6khz-evoked abr threshold,Hearing,abr threshold
+click-evoked abr threshold,Hearing,abr threshold
+response amplitude - bn,Hearing,response amplitude
+response amplitude - pp1,Hearing,response amplitude
+response amplitude - pp1_s,Hearing,response amplitude
+response amplitude - pp2,Hearing,response amplitude
+response amplitude - pp2_s,Hearing,response amplitude
+response amplitude - pp3,Hearing,response amplitude
+response amplitude - pp3_s,Hearing,response amplitude
+response amplitude - pp4,Hearing,response amplitude
+response amplitude - pp4_s,Hearing,response amplitude
+response amplitude - s,Hearing,response amplitude
+aortic diameter (dao),Heart,aortic diameter (dao)
+cardiac output,Heart,cardiac output
+cv,Heart,cv
+ejection fraction,Heart,ejection fraction
+end-diastolic diameter,Heart,end-diastolic diameter
+end-systolic diameter,Heart,end-systolic diameter
+fractional shortening,Heart,fractional shortening
+heart weight,Heart,heart weight
+heart weight normalised against body weight,Heart,heart weight
+heart weight normalised against tibia length,Heart,heart weight
+hr,Heart,hr
+hrv,Heart,hrv
+lvawd,Heart,lvawd
+lvaws,Heart,lvaws
+lvidd,Heart,lvidd
+lvids,Heart,lvids
+lvpwd,Heart,lvpwd
+lvpws,Heart,lvpws
+mean r amplitude,Heart,mean r amplitude
+mean sr amplitude,Heart,mean sr amplitude
+pnn5(6>ms),Heart,pnn5(6>ms)
+pq,Heart,pq
+pr,Heart,pr
+qrs,Heart,qrs
+qtc,Heart,qtc
+qtc dispersion,Heart,qtc dispersion
+respiration rate,Heart,respiration rate
+rmssd,Heart,rmssd
+rr,Heart,rr
+st,Heart,st
+stroke volume,Heart,stroke volume
+basophil cell count,Hematology,basophil count
+basophil differential count,Hematology,basophil count
+eosinophil cell count,Hematology,eosinophils
+eosinophil differential count,Hematology,eosinophils
+eosinophils,Hematology,eosinophils
+hematocrit,Hematology,hematocrit
+hemoglobin,Hematology,hemoglobin
+large unstained cell (luc) count,Hematology,luc
+large unstained cell (luc) differential count,Hematology,luc
+lymphocyte cell count,Hematology,lymphocytes
+lymphocyte differential count,Hematology,lymphocytes
+mean cell hemoglobin concentration,Hematology,mean cell hemoglobin concentration
+mean cell volume,Hematology,mean cell volume
+mean corpuscular hemoglobin,Hematology,mean corpuscular hemoglobin
+mean platelet volume,Hematology,mean platelet volume
+monocyte cell count,Hematology,monocytes
+monocyte differential count,Hematology,monocytes
+monocytes,Hematology,monocytes
+neutrophil cell count,Hematology,neutrophils
+neutrophil differential count,Hematology,neutrophils
+neutrophils,Hematology,neutrophils
+platelet count,Hematology,platelet count
+red blood cell count,Hematology,red blood cell count
+red blood cell distribution width,Hematology,red blood cell distribution width
+white blood cell count,Hematology,white blood cell count
+b cell total,Immunology,B cells
+b cells,Immunology,B cells
+b1 total,Immunology,B cells
+b1b cells,Immunology,B cells
+b2 immature + mzb,Immunology,B cells
+b2 mature,Immunology,B cells
+b2 total,Immunology,B cells
+b2b cells,Immunology,B cells
+cd24+ cd4 t cells,Immunology,cd4 t
+cd24+ cd8 t cells,Immunology,cd4 t
+cd4 cd25- nkt cells,Immunology,cd4 nkt
+cd4 cd25- t cells,Immunology,cd4 t
+cd4 cd25+ nkt cells,Immunology,cd4 nkt
+cd4 cd25+ t cells,Immunology,cd4 t
+cd4 cd44-cd62l- t cells,Immunology,cd4 t
+cd4 cd44-cd62l+ nkt cells,Immunology,cd4 nkt
+cd4 cd44-cd62l+ t cells,Immunology,cd4 t
+cd4 cd44+cd62l- nkt cells,Immunology,cd4 nkt
+cd4 cd44+cd62l- t cells,Immunology,cd4 t
+cd4 cd44+cd62l+ nkt cells,Immunology,cd4 nkt
+cd4 cd44+cd62l+ t cells,Immunology,cd4 t
+cd4 effector,Immunology,cd4 t
+cd4 nkt cells,Immunology,cd4 nkt
+cd4 resting/naive,Immunology,cd4 t
+cd4 t cells,Immunology,cd4 t
+cd4 t cells total,Immunology,cd4 t
+cd44+ t-regs,Immunology,cd44+ t-regs
+cd62l+ t-regs,Immunology,cd62l+ t-regs
+cd8 cd25- nkt cells,Immunology,cd8 nkt
+cd8 cd25- t cells,Immunology,cd8 t
+cd8 cd25+ nkt cells,Immunology,cd8 nkt
+cd8 cd25+ t cells,Immunology,cd8 t
+cd8 cd44-cd62l- t cells,Immunology,cd8 t
+cd8 cd44-cd62l+ nkt cells,Immunology,cd8 nkt
+cd8 cd44-cd62l+ t cells,Immunology,cd8 t
+cd8 cd44+cd62l- nkt cells,Immunology,cd8 nkt
+cd8 cd44+cd62l- t cells,Immunology,cd8 t
+cd8 cd44+cd62l+ nkt cells,Immunology,cd8 nkt
+cd8 cd44+cd62l+ t cells,Immunology,cd8 t
+cd8 effector,Immunology,cd8 t
+cd8 naive,Immunology,cd8 t
+cd8 nkt cells,Immunology,cd8 nkt
+cd8 resting,Immunology,cd8 t
+cd8 t cells,Immunology,cd8 t
+cd8 t cells total,Immunology,cd8 t
+cdc cd11b type,Immunology,cdcs
+cdc cd8a type,Immunology,cdcs
+cdcs,Immunology,cdcs
+cdcs cd11b type,Immunology,cdcs
+dc total,Immunology,dc total
+dn cd25- nkt cells,Immunology,dn nkt
+dn cd25- t cells,Immunology,dn t
+dn cd25+ nkt cells,Immunology,dn nkt
+dn cd25+ t cells,Immunology,dn t
+dn cd44-cd62l- t cells,Immunology,dn t
+dn cd44-cd62l+ nkt cells,Immunology,dn nkt
+dn cd44-cd62l+ t cells,Immunology,dn t
+dn cd44+cd62l- nkt cells,Immunology,dn nkt
+dn cd44+cd62l- t cells,Immunology,dn t
+dn cd44+cd62l+ nkt cells,Immunology,dn nkt
+dn cd44+cd62l+ t cells,Immunology,dn t
+dn nkt cells,Immunology,dn nkt
+dn t cells,Immunology,dn t
+dp t cells,Immunology,dp t
+follicular b cells,Immunology,follicular b cells
+follicular b cells (cd21/35+),Immunology,follicular b cells
+gd + b1,Immunology,B cells
+gd t cells,Immunology,t cells
+inkt,Immunology,inkt
+klrg1+ cd4 t cells,Immunology,klrg1
+klrg1+ cd4+ nkt cells,Immunology,klrg1
+klrg1+ t-regs,Immunology,klrg1
+macrophages,Immunology,macrophages
+mzb,Immunology,mzb
+mzb (cd21/35 high),Immunology,mzb
+nk cells (panel a),Immunology,nk cells
+nk cells (panel b),Immunology,nk cells
+nk klrg1+ cells,Immunology,nk cells
+nk subsets (q1),Immunology,nk cells
+nk subsets (q2),Immunology,nk cells
+nk subsets (q3),Immunology,nk cells
+nk subsets (q4),Immunology,nk cells
+nk total,Immunology,nkt cells
+nkt cells (panel a),Immunology,nkt cells
+nkt cells (panel b),Immunology,nkt cells
+nkt dn klrg1+ cells,Immunology,nkt cells
+nkt effector,Immunology,nkt cells
+nkt resting,Immunology,nkt cells
+nkt subsets (q1),Immunology,nkt cells
+nkt subsets (q3),Immunology,nkt cells
+nkt total,Immunology,nkt cells
+number of live cells acquired panel 1,Immunology,number of live cells acquired panel 1
+number of live cells acquired panel 2,Immunology,number of live cells acquired panel 2
+others,Immunology,others
+pdcs,Immunology,pdcs
+percentage of live gated events in panel a,Immunology,percentage of live gated events
+percentage of live gated events in panel b,Immunology,percentage of live gated events
+rp macrophage (cd19-  cd11c-),Immunology,rp macrophage (cd19-  cd11c-)
+rp macrophage (f4/80+),Immunology,rp macrophage (f4/80+)
+t cells (panel a),Immunology,t cells
+t cells (panel b),Immunology,t cells
+t subset,Immunology,t cells
+t/nkt/b1,Immunology,nkt cells
+total cell count in spleen,Immunology,total cell count in spleen
+total number of acquired events in panel a,Immunology,number events
+total number of acquired events in panel b,Immunology,number events
+transitional b cells,Immunology,B cells
+transitional b cells (cd21/35 low),Immunology,B cells
+tregs,Immunology,tregs
+tregs effector,Immunology,tregs
+tregs resting,Immunology,tregs
+area under glucose response curve,Metabolism,area under glucose response curve
+fasted blood glucose concentration,Metabolism,fasted blood glucose concentration
+glucose,Metabolism,glucose
+initial response to glucose challenge,Metabolism,initial response to glucose challenge
+insulin,Metabolism,insulin
+respiratory exchange ratio,Metabolism,respiratory exchange ratio
+total food intake,Metabolism,total food intake
+total water intake,Metabolism,total water intake
+body length,Morphology,body length
+bone area,Morphology,bone area
+bone mineral content (excluding skull),Morphology,bone mineral content (excluding skull)
+bone mineral density (excluding skull),Morphology,bone mineral density (excluding skull)
+fat mass,Morphology,fat mass
+fat/body weight,Morphology,fat mass
+lean mass,Morphology,lean mass
+lean/body weight,Morphology,lean mass
+left kidney,Morphology,kidney weight
+number of caudal vertebrae,Morphology,number of caudal vertebrae
+number of center entries,Morphology,number of center entries
+number of cervical vertebrae,Morphology,number of cervical vertebrae
+number of digits,Morphology,number of digits
+number of lumbar vertebrae,Morphology,number of lumbar vertebrae
+number of pelvic vertebrae,Morphology,number of pelvic vertebrae
+number of rears - total,Morphology,number of rears - total
+number of ribs right,Morphology,number of ribs
+number of signals,Morphology,number of signals
+number of thoracic vertebrae,Morphology,number of thoracic vertebrae
+right kidney,Morphology,kidney weight
+spleen weight,Morphology,spleen weight
+tibia length,Morphology,tibia length
+alanine aminotransferase,Physiology,alanine aminotransferase
+albumin,Physiology,albumin
+albumin to creatinine ratio,Physiology,albumin to creatinine ratio
+alkaline phosphatase,Physiology,alkaline phosphatase
+alpha-amylase,Physiology,alpha-amylase
+aspartate aminotransferase,Physiology,aspartate aminotransferase
+body temp,Physiology,body temp
+calcium,Physiology,calcium
+chloride,Physiology,chloride
+creatine kinase,Physiology,creatine kinase
+creatinine,Physiology,creatinine
+free fatty acids,Physiology,free fatty acids
+fructosamine,Physiology,fructosamine
+glycerol,Physiology,glycerol
+hdl cholesterol,Physiology,hdl-cholesterol
+hdl-cholesterol,Physiology,hdl-cholesterol
+iron,Physiology,iron
+lactate dehydrogenase,Physiology,lactate dehydrogenase
+ldl-cholesterol,Physiology,ldl-cholesterol
+lipase,Physiology,lipase
+magnesium,Physiology,magnesium
+microalbumin (calculated),Physiology,microalbumin (calculated)
+phosphorus,Physiology,phosphorus
+potassium,Physiology,potassium
+sodium,Physiology,sodium
+thyroxine,Physiology,thyroxine
+total bilirubin,Physiology,total bilirubin
+total cholesterol,Physiology,total cholesterol
+total protein,Physiology,total protein
+triglycerides,Physiology,triglycerides
+uibc (unsaturated iron binding capacity),Physiology,uibc (unsaturated iron binding capacity)
+urea (blood urea nitrogen - bun),Physiology,urea (blood urea nitrogen - bun)
+uric acid,Physiology,uric acid

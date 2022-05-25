@@ -971,7 +971,7 @@ folded_mu <-function(mean, variance){
   mu <- mean
   sigma <- sqrt(variance)
   fold_mu <- sigma*sqrt(2/pi)*exp((-mu^2)/(2*sigma^2)) + mu*(1 - 2*pnorm(-mu/sigma))
-  fold_mu
+  fold_muMA
 } 
 
 # folded variance

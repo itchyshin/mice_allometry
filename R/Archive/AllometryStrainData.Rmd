@@ -1,0 +1,55 @@
+---
+title: "Allometry plus strains"
+author: "susi"
+date: "10/05/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## loading rds files
+
+### allometry: 
+based on 20191203-ControlsSexDimorphism.csv.gz  (52.7 MB) // 20191203-ControlsSexDimorphism.csv (390.1 MB; continous data only, 2.87 millian observations)
+
+### strains: 
+(contains also categorical etc data, over 10 million obs)
+20191203-ControlsSexDimorphism.csv.gz  (108.1 MB) // 20191203-ControlsSexDimorphism.csv (1.7 GB)
+
+Note: csv files were extrated from gz and loaded in R, saved as .rds WITHOUT manipulation (easier to handle / smaller size). 
+Any additial data manipulation starts below
+
+```{r}
+#saveRDS(allometry, file= "allometry.rds")
+
+allometry <- readRDS(file = "allometry.rds")
+str(allometry)
+```
+
+
+```{r}
+#saveRDS(strains, file= "strainsy.rds")
+
+strains <- readRDS(file = "strains.rds")
+str(strains)
+```
+
+
+```{r}
+library(data.table)
+library(table.express)
+
+allometryDT <- setDT(allometry)
+strainsDT <- setDT(strains[, c("external_sample_id", "strain_accession_id","strain_name")]) 
+
+strains2 <- unique(strainsDT)
+  
+allometryNEW <-  merge(allometryDT,strains2,by="external_sample_id")
+ 
+saveRDS(allometryNEW, file= "allometryNEW.rds")
+
+```
+
+
