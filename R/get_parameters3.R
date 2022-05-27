@@ -224,12 +224,12 @@ get_parmetersN<- function(i){
   m_intercept_se <- as.numeric(males[1, 5])
   m_slope  <- as.numeric(males[3, 4])
   m_slope_se  <- as.numeric(males[3, 5])
-  fm_diff_int  <- as.numeric(males[2, 4])
-  fm_diff_int_se  <- as.numeric(males[2, 5])
-  fm_diff_int_p  <- as.numeric(males[2, 8])
-  fm_diff_slope <- as.numeric(males[4, 4])
-  fm_diff_slope_se <- as.numeric(males[4, 5])
-  fm_diff_slope_p <- as.numeric(males[4, 8])
+  fm_diff_int  <- as.numeric(females[2, 4])
+  fm_diff_int_se  <- as.numeric(females[2, 5])
+  fm_diff_int_p  <- as.numeric(females[2, 8])
+  fm_diff_slope <- as.numeric(females[4, 4])
+  fm_diff_slope_se <- as.numeric(females[4, 5])
+  fm_diff_slope_p <- as.numeric(females[4, 8])
   
   # variance component
   #group_sd <- as.numeric(VarCorr(model_f)[,2][2])
@@ -268,27 +268,28 @@ get_para_poss <- possibly(.f = get_parmetersN,
 dat_list2 <- readRDS(here("data/dat_list2.rds"))
 
 #run individual tests on single matrices extracted from dat_list
-testInd_dat1<- dat_list2[[100]] #male is 1
-res1<-get_parmetersN(testInd_dat1) # this works
+testInd_dat1<- dat_list2[[2]] #male is 1
+#res1<-get_parmetersN(testInd_dat1) # this works
 
 
 # # test
-# ln_c_weight <- groupScale(log(testInd_dat1[["weight"]]) ~ testInd_dat1[["sex"]])
-# testInd_dat1[,"ln_c_weight"] <- ln_c_weight
-# 
-# model_test <- lme(log(data_point2) ~ sex*ln_c_weight,
-#                   random = list(metadata_group = ~ ln_c_weight, 
-#                                 strain_name = ~ ln_c_weight,
-#                                 date_of_experiment = ~ 1),
-#                   weights = varIdent(form = ~1 | sex),
-#                   control = lmeControl(opt = "optim"),
-#                   data = testInd_dat1)
-# summary(model_test)
-# 
-# 
-# #getting all we want
-# test_females <- broom.mixed::tidy(model_test)
-# VarCorr(model_test)
+ln_c_weight <- groupScale(log(testInd_dat1[["weight"]]) ~ testInd_dat1[["sex"]])
+testInd_dat1[,"ln_c_weight"] <- ln_c_weight
+
+model_test <- lme(log(data_point2) ~ sex*ln_c_weight,
+                  random = list(metadata_group = ~ ln_c_weight,
+                                strain_name = ~ ln_c_weight,
+                                date_of_experiment = ~ 1),
+                  weights = varIdent(form = ~1 | sex),
+                  control = lmeControl(opt = "optim"),
+                  data = testInd_dat1)
+summary(model_test)
+
+
+#getting all we want
+test_females <- broom.mixed::tidy(model_test)
+test_females
+VarCorr(model_test)
 
 
 # model_test2 <- lmer(log(data_point) ~ sex*ln_c_weight,

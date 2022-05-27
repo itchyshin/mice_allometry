@@ -215,7 +215,7 @@ dim(dat_int2)
 # C
 ######
 
-# 69 out of 226
+# 67 out of 226
 
 # 52 out of 168 sig. intercept and slope diff - scenario C
 dat_intSlopes1<-dat1 %>%
