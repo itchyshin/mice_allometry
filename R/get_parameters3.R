@@ -224,12 +224,12 @@ get_parmetersN<- function(i){
   m_intercept_se <- as.numeric(males[1, 5])
   m_slope  <- as.numeric(males[3, 4])
   m_slope_se  <- as.numeric(males[3, 5])
-  fm_diff_int  <- as.numeric(females[2, 4])
-  fm_diff_int_se  <- as.numeric(females[2, 5])
-  fm_diff_int_p  <- as.numeric(females[2, 8])
-  fm_diff_slope <- as.numeric(females[4, 4])
-  fm_diff_slope_se <- as.numeric(females[4, 5])
-  fm_diff_slope_p <- as.numeric(females[4, 8])
+  fm_diff_int  <- as.numeric(males[2, 4])
+  fm_diff_int_se  <- as.numeric(males[2, 5])
+  fm_diff_int_p  <- as.numeric(males[2, 8])
+  fm_diff_slope <- as.numeric(males[4, 4])
+  fm_diff_slope_se <- as.numeric(males[4, 5])
+  fm_diff_slope_p <- as.numeric(males[4, 8])
   
   # variance component
   #group_sd <- as.numeric(VarCorr(model_f)[,2][2])
