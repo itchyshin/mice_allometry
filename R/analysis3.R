@@ -231,7 +231,7 @@ dim(dat_intSlopes2)
 # D
 ######
 
-# 41 out of 226
+# 55 out of 226
 
 # 41 no sig. difference between intercept and slope - scenario D
 dat_intslopesNS1 <- dat1 %>%

@@ -15,6 +15,7 @@ library(cmdstanr)
 check_cmdstan_toolchain(fix = TRUE, quiet = TRUE)
 library(posterior)
 library(bayesplot)
+#library(ggblend)
 
 #TODO - we should really renames or provide meta-data on what all column names mean (at the moment all very confusing)
 
@@ -53,10 +54,11 @@ dat <- dat %>% mutate(abs_int = folded_mu(fm_diff_int, fm_diff_int_se^2),
                       abs_lnVR = folded_mu(lnVR, VlnVR),
                       V_abs_int = folded_v(fm_diff_int, fm_diff_int_se^2), 
                       V_abs_slope = folded_v(fm_diff_slope, fm_diff_slope_se^2),
-                      V_abs_lnVR = folded_v(lnVR, VlnVR))
+                      V_abs_lnVR = folded_v(lnVR, VlnVR),
+                      total_n = f_n + m_n)
 
-# cbpl <- c("#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
-#           "#CC79A7", "#56B4E9", "#AA4499", "#DDCC77")
+cbpl <- c("#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00",
+          "#CC79A7", "#56B4E9", "#AA4499", "#DDCC77")
 
 #####################
 #
@@ -73,13 +75,15 @@ robust(modelr0, cluster  =  dat$parameter_group)
 i2_ml(modelr0)
 
 
-point.size = 1.5
+point.size = 2
+branch.size = 3.5
 
-t1 <- orchard_plot2(modelr0, mod = "Int", xlab = "Zr (transformed variance accounted for)", angle = 45, point.size = point.size, k = F) +
+t1 <- orchard_plot2(modelr0, mod = "Int", xlab = "Zr (transformed variance accounted for)", angle = 45, 
+                    point.size = point.size, branch.size = branch.size, k = F, N = dat$total_n) +
   scale_y_discrete(labels = "") +
   scale_fill_manual(values = "#999999") +
-  scale_colour_manual(values = "#999999") +
-  xlim(c(-0.5, 1.5))
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-0.5, 1.5))
 
 # meta-regression
 modelr1 <- rma.mv(yi = Zr, mod = ~ Category - 1,
@@ -91,12 +95,13 @@ summary(modelr1)
 robust(modelr1, cluster  =  dat$parameter_group)
 r2_ml(modelr1)
 
-t2 <- orchard_plot2(modelr1, mod = "Category", xlab = "Zr (transformed variance accounted for)", angle = 45,  point.size = point.size, k = F) + 
+t2 <- orchard_plot2(modelr1, mod = "Category", xlab = "Zr (transformed variance accounted for)", angle = 45,  point.size = point.size, k = F, N = dat$total_n, branch.size = branch.size,) + 
   scale_y_discrete(labels = rep("", 9)) +
   scale_fill_manual(values = cbpl) +
-  scale_colour_manual(values = cbpl) +
-  xlim(c(-0.5, 1.5))
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-0.5, 1.5))
 
+#t1/t2
 
 ######################
 # absolute effect size 
@@ -119,13 +124,13 @@ robust(modelia, cluster  =  dat$parameter_group)
 i2_ml(modelia)
 
 
-point.size = 1.5
+#point.size = 1.5
 
-p1 <- orchard_plot2(modelia, mod = "Int", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45, point.size = point.size,) +
+p1 <- orchard_plot2(modelia, mod = "Int", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45, point.size = point.size, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) +
   scale_y_discrete(labels = "Overall") +
   scale_fill_manual(values = "#999999") +
-  scale_colour_manual(values = "#999999") +
-  xlim(c(-0.5, 1.5))
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-0.5, 1.5))
 
 # meta-regression
 model1a <- rma.mv(yi = abs_int, V= V_abs_int, mod = ~ Category - 1,
@@ -135,10 +140,10 @@ summary(model1a)
 robust(model1a, cluster  =  dat$parameter_group)
 r2_ml(model1a)
 
-p2 <- orchard_plot2(model1a, mod = "Category", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45,  point.size = point.size) + 
+p2 <- orchard_plot2(model1a, mod = "Category", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45,  point.size = point.size, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) + 
   scale_fill_manual(values = cbpl) +
-  scale_colour_manual(values = cbpl) +
-  xlim(c(-0.5, 1.5))
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-0.5, 1.5))
 
 ####################
 # slope difference
@@ -153,11 +158,11 @@ robust(modelsa, cluster  =  dat$parameter_group)
 #funnel(modelsa)
 i2_ml(modelia)
 
-p3 <- orchard_plot2(modelsa, mod = "Int", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45,  point.size = point.size) +
+p3 <- orchard_plot2(modelsa, mod = "Int", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) +
   scale_y_discrete(labels = "") +
   scale_fill_manual(values = "#999999") +
-  scale_colour_manual(values = "#999999") +
-  xlim(c(-1.5, 10))
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-1.5, 10))
 
 # meta-regression
 model2a <- rma.mv(yi = abs_slope, V= V_abs_slope,
@@ -168,11 +173,11 @@ summary(model2a)
 robust(model2a, cluster  =  dat$parameter_group)
 r2_ml(model2a)
 
-p4 <- orchard_plot2(model2a, mod = "Category", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45, cb = F,  point.size = point.size) + 
+p4 <- orchard_plot2(model2a, mod = "Category", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45, cb = F,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) + 
   scale_y_discrete(labels = rep("", 9)) +
   scale_fill_manual(values = cbpl) +
-  scale_colour_manual(values = cbpl) +
-  xlim(c(-1.5, 10))
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-1.5, 10))
 
 #################
 # sd difference
@@ -186,11 +191,11 @@ robust(modelsda, cluster  =  dat$parameter_group)
 #funnel(modelsda)
 i2_ml(modelsda)
 
-p5 <- orchard_plot2(modelsda, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45,  point.size = point.size) +
+p5 <- orchard_plot2(modelsda, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) +
   scale_y_discrete(labels = "") +
   scale_fill_manual(values = "#999999") +
-  scale_colour_manual(values = "#999999") +
-  xlim(c(-0.2, 1.9))
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-0.2, 1.9))
 
 # meta-regression
 model3a <- rma.mv(yi = abs_lnVR, V= V_abs_lnVR, mod = ~ Category - 1,
@@ -199,11 +204,11 @@ model3a <- rma.mv(yi = abs_lnVR, V= V_abs_lnVR, mod = ~ Category - 1,
 summary(model3a)
 r2_ml(model3a)
 
-p6 <- orchard_plot2(model3a, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45, cb = F,  point.size = point.size) + 
+p6 <- orchard_plot2(model3a, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45, cb = F,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) + 
   scale_y_discrete(labels = rep("", 9)) +
   scale_fill_manual(values = cbpl) +
-  scale_colour_manual(values = cbpl) +
-  xlim(c(-0.2, 1.9))
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-0.2, 1.9))
 
 ###############
 # Fig 3
@@ -245,98 +250,101 @@ fit_4b <- brm(mod_lnsd + mod_lnslp + mod_lnint + mod_lnzr,
 summary(fit_4b)
 
 # saving the model
-saveRDS(fit_4b, file = here("data", "fit2_.rds"))
+saveRDS(fit_4b, file = here("data", "fit2.rds"))
 
+fit_4b <- readRDS(here("data", "fit2.rds"))
 
 # creating added precision
 # 
 
 # 3 main parameters
 
-dat %>%  mutate(pre_slp_int = 1/sqrt(V_abs_int/abs_int^2 + V_abs_slope/abs_slope^2),
-                pre_slp_sd =  1/sqrt(V_abs_slope/abs_slope^2 + V_abs_lnVR/abs_lnVR^2),
-                pre_int_sd = 1/sqrt(V_abs_int/abs_int^2 + V_abs_lnVR/abs_lnVR^2),
-                pre_int_fit =  1/sqrt(V_abs_int/abs_int^2 + VZr/Zr^2),
-                pre_slp_fit =  1/sqrt(V_abs_slope/abs_slope^2 +  VZr/Zr^2),
-                pre_sd_fit =  1/sqrt(V_abs_lnVR/abs_lnVR^2 +  VZr/Zr^2),
-                
-) -> dat 
+# dat %>%  mutate(pre_slp_int = 1/sqrt(V_abs_int/abs_int^2 + V_abs_slope/abs_slope^2),
+#                 pre_slp_sd =  1/sqrt(V_abs_slope/abs_slope^2 + V_abs_lnVR/abs_lnVR^2),
+#                 pre_int_sd = 1/sqrt(V_abs_int/abs_int^2 + V_abs_lnVR/abs_lnVR^2),
+#                 pre_int_fit =  1/sqrt(V_abs_int/abs_int^2 + VZr/Zr^2),
+#                 pre_slp_fit =  1/sqrt(V_abs_slope/abs_slope^2 +  VZr/Zr^2),
+#                 pre_sd_fit =  1/sqrt(V_abs_lnVR/abs_lnVR^2 +  VZr/Zr^2),
+#                 
+# ) -> dat 
 
 
 f1 <- ggplot(data = dat) +
-  geom_point(aes(x = log(abs_slope), y = log(abs_int), col = Category, size = pre_slp_int)) + 
+  geom_point(aes(x = log(abs_slope), y = log(abs_int), col = Category, size = total_n)) + 
   scale_fill_manual(values = cbpl) +
   scale_colour_manual(values = cbpl) +
   labs(x = "ln(Absolute difference in standardized slopes)" , y = "ln(Absolute difference in standardized intercepts)")+
-  labs(color='Trait types', size = "Precison") +
-  #annotate(geom="text", x=2.5, y = -5.5, label="r = 0.56 [0.42, 0.68]", size = 3)+
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x = - 7.8, y = -1, label="r = 0.74 [0.67, 0.81]", size = 3)+
   theme_bw()  +
   theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
-  guides(col = "none")
-
-
+  guides(col = "none", size = "none") 
 
 f2 <- ggplot(data = dat) +
-  geom_point(aes(x = log(abs_slope), y = log(abs_lnVR), col = Category, size = pre_slp_sd)) + 
+  geom_point(aes(x = log(abs_slope), y = log(abs_lnVR), col = Category, size = total_n)) + 
   scale_fill_manual(values = cbpl) +
   scale_colour_manual(values = cbpl) +
   labs(x = "ln(Absolute difference in standardized slopes)" , y = "ln(Absolute relative difference in SD)") +
-  labs(color='Trait types', size = "Precison") +
-  #annotate(geom="text", x=2.5, y = -4.8, label="r = 0.19 [0.01., 0.36]", size = 3)+
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x= -7.5, y = 0.5, label="r = 0.09 [-0.05., 0.24]", size = 3)+
   theme_bw()   +
   theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
-  guides(col = "none")
+  guides(size = "none", col = "none") 
+  #scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) +
 
 f3 <- ggplot(data = dat) +
-  geom_point(aes(x = log(abs_int), y = log(abs_lnVR), col = Category, size = pre_int_sd)) + 
+  geom_point(aes(x = log(abs_int), y = log(abs_lnVR), col = Category, size = total_n)) + 
   scale_fill_manual(values = cbpl) +
   scale_colour_manual(values = cbpl) +
   labs(x = "ln(Absolute difference in standardized intercepts)" , y = "ln(Absolute relative difference in SD)") +
-  labs(color='Trait types', size = "Precison") +
-  #annotate(geom="text", x= - 0.2, y = -4.8, label="r = 0.07 [-0.10, 0.24]", size = 3)+
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x= - 10, y = 0.5, label="r = 0.04 [-0.10, 0.17]", size = 3)+
   theme_bw() +
-  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10)) +
+  guides(size = "none", col = "none")
 
-
-f3/f2/f1  + plot_annotation(tag_levels = 'A')
 
 f4 <- ggplot(data = dat) +
-  geom_point(aes(y = log(Zr), x = log(abs_int), col = Category, size = pre_int_fit)) + 
+  geom_point(aes(y = log(Zr), x = log(abs_int), col = Category, size = total_n)) + 
   scale_fill_manual(values = cbpl) +
   scale_colour_manual(values = cbpl) +
   labs(y = "Zr (transformed variance accounted for)", x =   "ln(Absolute difference in standardized intercepts)") +
-  labs(color='Trait types', size = "Precison") +
-  #annotate(geom="text", x=2.5, y = -4.8, label="r = 0.19 [0.01., 0.36]", size = 3)+
+  labs(color='Trait types',size = "Sample size (N)") +
+  annotate(geom="text", x= -2.5, y = -6, label="r = 0.70 [0.62., 0.77]", size = 3)+
   theme_bw()   +
-  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10)) +
+  guides(size = "none") +
+  theme(legend.position= c(0.03, 0.97), legend.justification = c(0, 0.97))
+  
 
 f5 <- ggplot(data = dat) +
-  geom_point(aes(y = log(Zr), x = log(abs_slope), col = Category, size = pre_slp_fit)) + 
+  geom_point(aes(y = log(Zr), x = log(abs_slope), col = Category, size = total_n)) + 
   scale_fill_manual(values = cbpl) +
   scale_colour_manual(values = cbpl) +
   labs(y = "Zr (transformed variance accounted for)" , x = "ln(Absolute difference in standardized slopes)") +
-  labs(color='Trait types', size = "Precison") +
-  #annotate(geom="text", x= - 0.2, y = -4.8, label="r = 0.07 [-0.10, 0.24]", size = 3)+
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x=  0, y = -6, label="r = 0.39 [0.26, 0.51]", size = 3)+
   theme_bw() +
   theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
-  guides(col = "none")
+  guides(col = "none") +
+  scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) +
+  theme(legend.position = c(0.03, 0.97), legend.justification = c(0, 0.97))
 
 
 f6 <- ggplot(data = dat) +
-  geom_point(aes(y = log(Zr), x = log(abs_lnVR), col = Category, size = pre_sd_fit)) + 
+  geom_point(aes(y = log(Zr), x = log(abs_lnVR), col = Category, size = total_n)) + 
   scale_fill_manual(values = cbpl) +
   scale_colour_manual(values = cbpl) +
   labs(y = "Zr (transformed variance accounted for)", x = "ln(Absolute relative difference in SD)" )+
-  labs(color='Trait types', size = "Precison") +
-  #annotate(geom="text", x=2.5, y = -5.5, label="r = 0.56 [0.42, 0.68]", size = 3)+
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x= -0.25, y = - 6, label="r = 0.16 [0.02, 0.30]", size = 3)+
   theme_bw()  +
   theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
-  guides(col = "none")
+  guides(col = "none", size = "none") #+
+  #scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) 
 
 
-
-f4/f5/f6  + plot_annotation(tag_levels = 'A')
-
+ (f3|f2)/(f1|f4)/(f5|f6)  + plot_annotation(tag_levels = 'A')
 
 
 #################

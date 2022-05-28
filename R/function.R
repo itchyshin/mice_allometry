@@ -1,8 +1,9 @@
 # functions
 
 orchard_plot2 <- function (object, mod = "Int", xlab, N = "none", alpha = 0.5, 
-          angle = 90, cb = FALSE, k = TRUE, transfm = c("none", "tanh"), point.size = 3,
-          condition.lab = "Condition") 
+          angle = 90, cb = FALSE, k = TRUE, transfm = c("none", "tanh"), 
+          point.size = 2.5, branch.size = 5,
+          condition.lab = "Condition", legend.on = TRUE) 
 {
   transfm <- match.arg(transfm)
   if (any(class(object) %in% c("rma.mv", "rma"))) {
@@ -19,10 +20,13 @@ orchard_plot2 <- function (object, mod = "Int", xlab, N = "none", alpha = 0.5,
                            labels = mod_table$name)
   data$scale <- (1/sqrt(data[, "vi"]))
   legend <- "Precision (1/SE)"
-  if (any(N != "none")) {
+ 
+  # sample size 
+  if(any(N != "none")){
     data$scale <- N
-    legend <- "Sample Size (N)"
+    legend <- "Sample size (N)" # we want to use italic
   }
+  
   if (transfm == "tanh") {
     cols <- sapply(mod_table, is.numeric)
     mod_table[, cols] <- Zr_to_r(mod_table[, cols])
@@ -44,7 +48,7 @@ orchard_plot2 <- function (object, mod = "Int", xlab, N = "none", alpha = 0.5,
                                                                           colour = moderator), alpha = alpha) + ggplot2::geom_hline(yintercept = 0, 
                                                                                                                                     linetype = 2, colour = "black", alpha = alpha) + 
       ggplot2::geom_linerange(data = mod_table, ggplot2::aes(x = name, 
-                                                             ymin = lowerCL, ymax = upperCL), size = 1.2, 
+                                                             ymin = lowerCL, ymax = upperCL), size = branch.size, 
                               position = ggplot2::position_dodge2(width = 0.3)) + 
       ggplot2::geom_pointrange(data = mod_table, ggplot2::aes(y = estimate, 
                                                               x = name, ymin = lowerPR, ymax = upperPR, shape = as.factor(condition), 
@@ -56,6 +60,7 @@ orchard_plot2 <- function (object, mod = "Int", xlab, N = "none", alpha = 0.5,
       ggplot2::theme(legend.direction = "horizontal") + 
       ggplot2::theme(legend.background = ggplot2::element_blank()) + 
       ggplot2::labs(y = label, x = "", size = legend) + 
+      ggplot2::scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) + 
       ggplot2::labs(shape = condition.lab) + ggplot2::theme(axis.text.y = ggplot2::element_text(size = 10, 
                                                                                                 colour = "black", hjust = 0.5, angle = angle))
     plot <- plot + ggplot2::annotate("text", y = (max(data$yi) + 
@@ -72,7 +77,7 @@ orchard_plot2 <- function (object, mod = "Int", xlab, N = "none", alpha = 0.5,
                                            xmax = upperPR), height = 0, show.legend = FALSE, 
                               size = 0.5, alpha = 0.6) + ggplot2::geom_errorbarh(ggplot2::aes(xmin = lowerCL, 
                                                                                               xmax = upperCL), height = 0, show.legend = FALSE, 
-                                                                                 size = 1.2) + ggplot2::geom_vline(xintercept = 0, 
+                                                                                 size = branch.size) + ggplot2::geom_vline(xintercept = 0, 
                                                                                                                    linetype = 2, colour = "black", alpha = alpha) + 
       ggplot2::geom_point(ggplot2::aes(fill = name), size = point.size, 
                           shape = 21) + ggplot2::theme_bw() + ggplot2::guides(fill = "none", 
@@ -81,6 +86,7 @@ orchard_plot2 <- function (object, mod = "Int", xlab, N = "none", alpha = 0.5,
       ggplot2::theme(legend.direction = "horizontal") + 
       ggplot2::theme(legend.background = ggplot2::element_blank()) + 
       ggplot2::labs(x = label, y = "", size = legend) + 
+      ggplot2::scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) + 
       ggplot2::theme(axis.text.y = ggplot2::element_text(size = 10, 
                                                          colour = "black", hjust = 0.5, angle = angle))
     if (k == TRUE) {
@@ -94,6 +100,12 @@ orchard_plot2 <- function (object, mod = "Int", xlab, N = "none", alpha = 0.5,
     plot <- plot + ggplot2::scale_fill_manual(values = cbpl) + 
       ggplot2::scale_colour_manual(values = cbpl)
   }
+  
+  if (legend.on == FALSE){
+    plot <- plot + ggplot2::theme(legend.position = "none")
+  }
+  
+  
   return(plot)
 }
 
