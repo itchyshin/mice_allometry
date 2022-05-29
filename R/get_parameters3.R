@@ -53,24 +53,24 @@ allometrynew2 <- allometrynew %>%
          parameter_name != "Test duration") %>% 
   filter(!is.infinite(data_point2), !is.infinite(log(data_point2))) # removing infite and 0
 
-allometrynew2$parameter_name[allometrynew2$parameter_name == "latency to fall_mean"] 
+# dim(allometry)
+# dim(allometrynew)
+# dim(allometrynew2)
+# 
+# # the number of traits
+# length(unique(allometrynew2$parameter_name))
+# 
+# # the number of substrains
+# length(unique(allometrynew2$strain_name))
+# strain information
+summary(factor(allometrynew2$strain_name))
 
-dim(allometry)
-dim(allometrynew)
-dim(allometrynew2)
+# # check there is no 0
+# sum(is.infinite(log(allometrynew2$data_point2)))
 
-# the number of traits
-length(unique(allometrynew2$parameter_name))
-
-# the number of substrains
-length(unique(allometrynew2$strain_name))
-# check there is no 0
-
-sum(is.infinite(log(allometrynew2$data_point2)))
-
-# the number of interval scale traits
-allometrynew2 %>% group_by(parameter_name) %>% summarise(ratio_int = ratio_int[1]) -> sum_ri
-sum(sum_ri$ratio_int == "interval")
+# # the number of interval scale traits
+# allometrynew2 %>% group_by(parameter_name) %>% summarise(ratio_int = ratio_int[1]) -> sum_ri
+# sum(sum_ri$ratio_int == "interval")
 
 
 #split dataframe by parameter to generate a list of dfs

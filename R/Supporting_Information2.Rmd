@@ -514,17 +514,83 @@ print.orchard <- function(object, ...){
 
 ```
 
+## Loading raw data and creating a list of trait data
+
+Below we see sub-strain information and sample size for each sub-strains
+
+```{r, eval=FALSE}
+
+# loading data
+allometry <- readRDS(here("data/allometryNEW.rds"))
 
 
+#STEP 1 remove rows with missing  data and NA 
+allometrynew<-allometry[complete.cases(allometry),]
 
-## Loading raw data and group category 
+# getting rid of NA for data_point and weight
+
+allometrynew2 <- allometrynew %>% 
+  filter(!is.na(data_point), !is.na(weight)) %>% 
+  group_by(parameter_name, sex, metadata_group, strain_name) %>%
+  mutate(count = n()) %>% 
+  ungroup() %>% 
+  group_by(parameter_name) %>% # adjusting interval data
+  mutate(min_val = min(data_point),
+         data_point2 = if_else(min_val > 0, data_point, data_point + abs(min_val)),
+         min_val2 = min( data_point[data_point!=min(data_point)]),
+         data_point2 = if_else(min_val == 0, data_point2 + min_val2, data_point2),
+         ratio_int =  if_else(min_val > 0, "ratio", "interval"),
+         new_min = min(data_point2),
+         nmeta = n_distinct(metadata_group),
+         nstrain = n_distinct(strain_name),
+         sex = as.factor(sex),
+         parameter_name = if_else(parameter_name == "Latency to fall_Mean", 
+                                  "Latency to fall mean"  , parameter_name)) %>% 
+  ungroup() %>% 
+  filter(count > 49) %>% # this can be adjusted
+  filter(parameter_name != "BMC/Body weight", 
+         parameter_name != "Body weight",  
+         parameter_name != "Body Weight", 
+         parameter_name != "Body weight after experiment" , 
+         parameter_name != "Body weight before experiment",
+         parameter_name != "Test duration") %>% 
+  filter(!is.infinite(data_point2), !is.infinite(log(data_point2))) # removing infite and 0
+
+# dim(allometry)
+# dim(allometrynew)
+# dim(allometrynew2)
+# 
+# # the number of traits
+# length(unique(allometrynew2$parameter_name))
+# 
+# # the number of substrains
+# length(unique(allometrynew2$strain_name))
+# strain information
+summary(factor(allometrynew2$strain_name))
+
+# # check there is no 0
+# sum(is.infinite(log(allometrynew2$data_point2)))
+
+# # the number of interval scale traits
+# allometrynew2 %>% group_by(parameter_name) %>% summarise(ratio_int = ratio_int[1]) -> sum_ri
+# sum(sum_ri$ratio_int == "interval")
+
+
+#split dataframe by parameter to generate a list of dfs
+#all_list<-split(allometrynew2, allometrynew2$parameter_name)
+
+#saveRDS(all_list, file = here("data", "dat_list2.rds"))
+```
+
+
+## Loading a list of trait data and group category 
 
 ```{r,  eval=FALSE}
 # loading data
-dat_list <- readRDS(here("data/dat_list.rds"))
+dat_list <- readRDS(here("data/dat_list2.rds"))
 
 # grouping for category and parameter_group (this is from Zajitschek et al. 2020 eLife; slightly modfied)
-dat_category<-read_csv(here("data/cateogry_parameter2.csv")) 
+dat_category<-read_csv(here("data/cateogry_parameter3.csv")) 
 ```
 
 # Data preparation {.tabset}
@@ -534,41 +600,44 @@ dat_category<-read_csv(here("data/cateogry_parameter2.csv"))
 ```{r,  eval=FALSE}
 
 #run function across list of matrices
-Fin_dat<-map_dfr(dat_list, get_parmetersN)
-
-#Fin_dat[Fin_dat$parameter_name == "light side time spent",]
-
-#remove "body weight" duplicates 
-dat<-Fin_dat[-c(27:30),] 
+processing <-map_dfr(dat_list2, get_para_poss)
+dat <- data.frame(processing, row.names = NULL)
 
 dat %>% left_join(dat_category, by = ("parameter_name" = "parameter_name") ) %>% arrange(Category)  -> dat
 
-write_csv(dat, here("data/data_parameters3.csv"))
+dim(dat)
+
+#write_csv(dat, here("data/test4.csv"))
+write_csv(dat, here("data/data_parameters5.csv"))
+
 
 # first getting p values - the contrasts between males and females for 
 
-dat <-read_csv(here("data/data_parameters3.csv"))
+dat <-read_csv(here("data/data_parameters5.csv"))
 
 #assess number of traits with sig shifts in intercept and slope
 
-# getting lnVR to compare SDs and SD
+# getting lnVR to compare SDs and SD and Zr (variance for Zr)
 
 dat %>% mutate(lnVR = log(f_sd/m_sd) + 1/(2*(f_n-3)) - 1/(2*(m_n-3)), 
                VlnVR = 1/(2*(f_n-3)) + 1/(2*(m_n-3)), 
                low_lnVR = lnVR - qnorm(0.975)*VlnVR, 
                high_lnVR = lnVR + qnorm(0.975)*VlnVR,
                t_val_sd = lnVR/sqrt(VlnVR),
-               p_val_sd = 2*(1-pt(abs(t_val_sd), f_n-1 + m_n-1))
-) -> dat
+               p_val_sd = 2*(1-pt(abs(t_val_sd), f_n-1 + m_n-1)),
+               # r squared
+               Zr = atanh(r_m),
+               VZr = 1/((f_n + m_n) - 3)
+               ) -> dat
 
-write_csv(dat, here("data/data_parameters4.csv"))
+write_csv(dat, here("data/data_parameters6.csv"))
 ```
 
 ## Dataset and meta-data
 
 ```{r}
 # loading data
-dat <- read_csv(here("data/data_parameters4.csv"))
+dat <- read_csv(here("data/data_parameters6.csv"))
 # creating observation level random effect
 dat$obs <- 1:dim(dat)[1]
 # making character strings into factors
@@ -598,11 +667,11 @@ kable(dat, "html") %>%
 - **fm_diff_slope**: difference in slopes between females and males
 - **fm_diff_slope_se**: standard error for for the difference in intercepts between females and males
 - **fm_diff_slope_p**: p value associated with fm_diff_slope
-- **group_sd**: the square-root of the variance component for "meta-data" group (see the text)
-- **g_slope_sd**: the square-root of the variance component for the random slope (weight)
 - **batch_sd**: the square-root of the variance component for "batch" (see the text)
 - **f_sd**: female residual standard deviation
 - **m_sd**: female residual standard deviation
+- **r_m**: marginal R squared (variance accounted for by fixed effects)
+- **r_c**: conditional R squared (variance accounted for by fixed and random effects)
 - **Category**: 9 function categories (see the text)
 - **parameter_group**: Grouping for non-independent traits
 - **lnVR**: log ratio between f_sd and m_sd
@@ -611,6 +680,8 @@ kable(dat, "html") %>%
 - **high_lnVR**: upper confidence limit for lnVR
 - **t_val_sd**: t values associated with lnVR and VlnVR
 - **p_val_sd**: p values associated with lnVR and VlnVR
+- **Zr**: transformed value of sqrt(r_c)
+- **VZr**: sampling variance for Zr
 - **obs**: unique observation level ID
 
 # Data analysis {.tabset}
@@ -691,7 +762,7 @@ m_dat2 <- n_dat2  %>% mutate(merged_p_sd = map_dbl(data, p_mod_sd),
 dat_slopes <-dat %>%
   filter (fm_diff_slope_p <= 0.05 & fm_diff_int_p > 0.05)
 
-#13 out of 297 traits sig slope diff - scenario A
+#16 out of 375 traits sig slope diff - scenario A
 nrow(dat_slopes)
 
 # reduced dataset
@@ -701,7 +772,7 @@ dat_slopes1 <-dat1 %>%
 dat_slopes2 <-m_dat2 %>%
   filter (merged_p_slp <= 0.05 & merged_p_int > 0.05)
 
-#8 out of 181 traits sig slope diff - scenario A
+#11 out of 226 traits sig slope diff - scenario A
 nrow(dat_slopes1)+ nrow(dat_slopes2) 
 ```
 
@@ -712,7 +783,7 @@ nrow(dat_slopes1)+ nrow(dat_slopes2)
 dat_int<- dat %>%
   filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p >0.05)
 
-#125 out of 297 traits sig intercept diff  same slope - scenario B
+#165 out of 375 traits sig intercept diff  same slope - scenario B
 nrow(dat_int) 
 
 # reduced dataset
@@ -722,7 +793,7 @@ dat_int1<- dat1 %>%
 dat_int2 <-m_dat2 %>%
   filter (merged_p_int <= 0.05 & merged_p_slp > 0.05)
 
-#70 out of 181 traits sig intercept diff  same slope - scenario B
+#93 out of 226 traits sig intercept diff  same slope - scenario B
 nrow(dat_int1)+ nrow(dat_int2) 
 ```
 
@@ -733,7 +804,7 @@ nrow(dat_int1)+ nrow(dat_int2)
 dat_intSlopes<-dat %>%
   filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p <= 0.05)
 
-#86 out of 297 sig intercept and slope diff - scenario C
+#81 out of 375 sig intercept and slope diff - scenario C
 nrow(dat_intSlopes)
 
 # reduced dataset
@@ -743,7 +814,7 @@ dat_intSlopes1<-dat1 %>%
 dat_intSlopes2 <-m_dat2 %>%
   filter (merged_p_int <= 0.05 & merged_p_slp <= 0.05)
 
-#69 out of 181 sig intercept and slope diff - scenario C
+#67 out of 226 sig intercept and slope diff - scenario C
 nrow(dat_intSlopes1)+ nrow(dat_intSlopes2) 
 ```
 
@@ -753,7 +824,7 @@ nrow(dat_intSlopes1)+ nrow(dat_intSlopes2)
 # full dataset
 dat_intslopesNS<- dat %>%
   filter (fm_diff_slope_p >0.05 & fm_diff_int_p > 0.05)
-#73 out of 297 - no sig difference between intercept and slope - scenario D
+#113 out of 375 - no sig difference between intercept and slope - scenario D
 nrow(dat_intslopesNS) 
 
 # reduced dataset
@@ -763,7 +834,7 @@ dat_intslopesNS1<- dat1 %>%
 dat_intslopesNS2 <-m_dat2 %>%
   filter (merged_p_int > 0.05 & merged_p_slp > 0.05)
 
-#34 out of 181 no sig difference between intercept and slope - scenario D
+#55 out of 226 no sig difference between intercept and slope - scenario D
 nrow(dat_intslopesNS1)+ nrow(dat_intslopesNS2) 
 ```
 
@@ -771,11 +842,11 @@ nrow(dat_intslopesNS1)+ nrow(dat_intslopesNS2)
 
 ```{r}
 # full dataset
-# 205 out of 297 signficant differences in residual SDs
+# 261 out of 375 signficant differences in residual SDs
 length(which(dat$p_val_sd <= 0.05))
 #hist(log(dat$p_val_sd)) # p = 0.05 ~ - 3
 
-# 128 of out of 181 signficant differences in residual SDs
+# 161 of out of 226 signficant differences in residual SDs
 length(which(m_dat2$merged_p_sd <= 0.05)) + length(which(dat1$p_val_sd <= 0.05))
 ```
 
@@ -1056,7 +1127,7 @@ p4 <-
 
 ```{r}
 par(mar = c(6, 6, 6, 6))
-v = c(57, 27, 16, 27, 25, 79, 9, 24, 33)
+v = c( 85, 39, 21, 31, 25, 111, 8, 22, 33)
 t = c(
  'behaviour',
  'eye',
@@ -1115,7 +1186,8 @@ dat <- dat %>% mutate(abs_int = folded_mu(fm_diff_int, fm_diff_int_se^2),
                       abs_lnVR = folded_mu(lnVR, VlnVR),
                       V_abs_int = folded_v(fm_diff_int, fm_diff_int_se^2), 
                       V_abs_slope = folded_v(fm_diff_slope, fm_diff_slope_se^2),
-                      V_abs_lnVR = folded_v(lnVR, VlnVR))
+                      V_abs_lnVR = folded_v(lnVR, VlnVR),
+                      total_n = f_n + m_n)
 
 ```
 
@@ -1205,31 +1277,63 @@ summary(model3a)
 r2_ml(model3a)
 ```
 
+## Comparing model fits 
+
+This is a meta-analytic model of Zr (transformed model fits). We use the `rubust` function calculates to see whether our results form the model is robust (consistent). 
+
+```{r}
+modelr0 <- rma.mv(yi = Zr, 
+                  V= VZr, 
+                  random = list(~1| Category, ~1| parameter_group, ~1|obs), 
+                  data = dat)
+summary(modelr0)
+robust(modelr0, cluster  =  dat$parameter_group)
+
+#funnel(modelr0)
+i2_ml(modelr0)
+```
+
+This is a meta-regression model of Zr (transformed model fits). with a functional category as a moderator. We use the `rubust` function calculates to see whether our results form the model is robust (consistent). 
+
+```{r}
+# meta-regression
+modelr1 <- rma.mv(yi = Zr, mod = ~ Category - 1,
+               V= VZr, 
+               random = list(~1| parameter_group, ~1|obs), 
+               data = dat)
+
+summary(modelr1)
+# R2 (variance explained)
+r2_ml(modelr1)
+```
+
 ## Obtaining correlations among intercepts, slopes and SDs
 
 ```{r, eval = FALSE}
 
-# tri-variate model
+# quad-variate model
 
 mod_lnsd <- bf(log(abs_lnVR) | se(sqrt(V_abs_lnVR)/abs_lnVR)  ~ - 1 +  Category+ (1|q|parameter_group))
 mod_lnslp <- bf(log(abs_slope) | se(sqrt(V_abs_slope)/abs_slope)  ~  - 1 +  Category + (1|q|parameter_group))
 mod_lnint <- bf(log(abs_int) | se(sqrt(V_abs_int)/abs_int)  ~  - 1 +  Category + (1|q|parameter_group))
+mod_lnzr <- bf(log(Zr) | se(sqrt(VZr)/Zr)  ~  - 1 +  Category + (1|q|parameter_group))
 
-fit_3b <- brm(mod_lnsd + mod_lnslp + mod_lnint,
-                 data = dat,
-                 chains = 2, cores = 2, iter = 4000, warmup = 1000,
-             backend = "cmdstanr")
+fit_4b <- brm(mod_lnsd + mod_lnslp + mod_lnint + mod_lnzr,
+              data = dat,
+              chains = 2, cores = 2, iter = 4000, warmup = 1000,
+              backend = "cmdstanr"
+              )
 
-summary(fit_3b)
+summary(fit_4b)
 
 # saving the model
 #saveRDS(fit_3b, file = here("data", "fit_3b.rds"))
 ```
 
 ```{r, echo = FALSE}
-fit_3b <- readRDS(here("data", "fit_3b.rds"))
+fit_4b <- readRDS(here("data", "fit2.rds"))
 
-summary(fit_3b)
+summary(fit_4b)
 ```
 
 
@@ -1240,51 +1344,69 @@ summary(fit_3b)
 cbpl <- c("#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
           "#CC79A7", "#56B4E9", "#AA4499", "#DDCC77")
 
-point.size <- 1.5
+point.size = 2
+branch.size = 3.5
+
+# meta-analysis with model fit
+t1 <- orchard_plot2(modelr0, mod = "Int", xlab = "Zr (transformed variance accounted for)", angle = 45, 
+                    point.size = point.size, branch.size = branch.size, k = F, N = dat$total_n) +
+  scale_y_discrete(labels = "") +
+  scale_fill_manual(values = "#999999") +
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-0.5, 1.5))
+
+# meta-regression with model fit
+t2 <- orchard_plot2(modelr1, mod = "Category", xlab = "Zr (transformed variance accounted for)", angle = 45,  point.size = point.size, k = F, N = dat$total_n, branch.size = branch.size,) + 
+  scale_y_discrete(labels = rep("", 9)) +
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-0.5, 1.5))
+
 
 # intercept meta-analysis
-p1 <- orchard_plot2(modelia, mod = "Int", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45, point.size = point.size) +
+p1 <- orchard_plot2(modelia, mod = "Int", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45, point.size = point.size, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) +
   scale_y_discrete(labels = "Overall") +
   scale_fill_manual(values = "#999999") +
-  scale_colour_manual(values = "#999999") +
-  xlim(c(-0.5, 1.5))
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-0.5, 1.5))
 
 # intercept meta-regression
-p2 <- orchard_plot2(model1a, mod = "Category", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45,  point.size = point.size) + 
+p2 <- orchard_plot2(model1a, mod = "Category", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45,  point.size = point.size, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) + 
   scale_fill_manual(values = cbpl) +
-  scale_colour_manual(values = cbpl) +
-  xlim(c(-0.5, 1.5))
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-0.5, 1.5))
 
 # slope meta-analysis
-p3 <- orchard_plot2(modelsa, mod = "Int", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45,  point.size = point.size) +
+p3 <- orchard_plot2(modelsa, mod = "Int", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) +
   scale_y_discrete(labels = "") +
   scale_fill_manual(values = "#999999") +
-  scale_colour_manual(values = "#999999") +
-  xlim(c(-1.5, 10))
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-1.5, 10))
 
 # slope meta-regression
-p4 <- orchard_plot2(model2a, mod = "Category", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45, cb = F,  point.size = point.size) + 
+p4 <- orchard_plot2(model2a, mod = "Category", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45, cb = F,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) + 
   scale_y_discrete(labels = rep("", 9)) +
   scale_fill_manual(values = cbpl) +
-  scale_colour_manual(values = cbpl) +
-  xlim(c(-1.5, 10))
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-1.5, 10))
 
 # SD meta-analysis
-p5 <- orchard_plot2(modelsda, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45,  point.size = point.size) +
+p5 <- orchard_plot2(modelsda, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) +
   scale_y_discrete(labels = "") +
   scale_fill_manual(values = "#999999") +
-  scale_colour_manual(values = "#999999") +
-  xlim(c(-0.2, 1.9))
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-0.2, 1.9))
 
 # SD meta-regression
-p6 <- orchard_plot2(model3a, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45, cb = F,  point.size = point.size) + 
+p6 <- orchard_plot2(model3a, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45, cb = F,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) + 
   scale_y_discrete(labels = rep("", 9)) +
   scale_fill_manual(values = cbpl) +
-  scale_colour_manual(values = cbpl) +
-  xlim(c(-0.2, 1.9))
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-0.2, 1.9))
+
 
 # putting it together
-(p1 + p3 + p5) / (p2 + p4 + p6)  + plot_layout(heights = c(1, 4)) + plot_annotation(tag_levels = 'A')
+(p1 | p3 | p5 | t1) / (p2 | p4 | p6 | t2)  + plot_layout(heights = c(1, 3)) + plot_annotation(tag_levels = 'A')
 
 ```
 
@@ -1301,49 +1423,92 @@ include_graphics(here("fig", "Fig3.png"))
 ```{r, fig.height= 12}
 # creating added precision
 
-dat %>%  mutate(pre_slp_int = 1/sqrt(V_abs_int/abs_int^2 + V_abs_slope/abs_slope^2),
-                pre_slp_sd =  1/sqrt(V_abs_slope/abs_slope^2 + V_abs_lnVR/abs_lnVR^2),
-                pre_int_sd = 1/sqrt(V_abs_int/abs_int^2 + V_abs_lnVR/abs_lnVR^2)
-) -> dat 
+# dat %>%  mutate(pre_slp_int = 1/sqrt(V_abs_int/abs_int^2 + V_abs_slope/abs_slope^2),
+#                 pre_slp_sd =  1/sqrt(V_abs_slope/abs_slope^2 + V_abs_lnVR/abs_lnVR^2),
+#                 pre_int_sd = 1/sqrt(V_abs_int/abs_int^2 + V_abs_lnVR/abs_lnVR^2)
+# ) -> dat 
 
 #  colour-blind freindly colour
 cbpl <- c("#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
           "#CC79A7", "#56B4E9", "#AA4499", "#DDCC77")
 
 f1 <- ggplot(data = dat) +
-  geom_point(aes(x = log(abs_slope), y = log(abs_int), col = Category, size = pre_slp_int)) + 
+  geom_point(aes(x = log(abs_slope), y = log(abs_int), col = Category, size = total_n)) + 
   scale_fill_manual(values = cbpl) +
   scale_colour_manual(values = cbpl) +
   labs(x = "ln(Absolute difference in standardized slopes)" , y = "ln(Absolute difference in standardized intercepts)")+
-  labs(color='Trait types', size = "Precison") +
-  annotate(geom="text", x=2.5, y = -5.5, label="r = 0.56 [0.42, 0.68]", size = 3)+
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x = - 7.8, y = -1, label="r = 0.74 [0.67, 0.81]", size = 3)+
   theme_bw()  +
   theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
-  guides(col = "none")
+  guides(col = "none", size = "none") 
 
 f2 <- ggplot(data = dat) +
-  geom_point(aes(x = log(abs_slope), y = log(abs_lnVR), col = Category, size = pre_slp_sd)) + 
+  geom_point(aes(x = log(abs_slope), y = log(abs_lnVR), col = Category, size = total_n)) + 
   scale_fill_manual(values = cbpl) +
   scale_colour_manual(values = cbpl) +
   labs(x = "ln(Absolute difference in standardized slopes)" , y = "ln(Absolute relative difference in SD)") +
-  labs(color='Trait types', size = "Precison") +
-  annotate(geom="text", x=2.5, y = -4.8, label="r = 0.19 [0.01., 0.36]", size = 3)+
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x= -7.5, y = 0.5, label="r = 0.09 [-0.05., 0.24]", size = 3)+
   theme_bw()   +
   theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
-  guides(col = "none")
+  guides(size = "none", col = "none") 
+  #scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) +
 
 f3 <- ggplot(data = dat) +
-  geom_point(aes(x = log(abs_int), y = log(abs_lnVR), col = Category, size = pre_int_sd)) + 
+  geom_point(aes(x = log(abs_int), y = log(abs_lnVR), col = Category, size = total_n)) + 
   scale_fill_manual(values = cbpl) +
   scale_colour_manual(values = cbpl) +
   labs(x = "ln(Absolute difference in standardized intercepts)" , y = "ln(Absolute relative difference in SD)") +
-  labs(color='Trait types', size = "Precison") +
-  annotate(geom="text", x= - 0.2, y = -4.8, label="r = 0.07 [-0.10, 0.24]", size = 3)+
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x= - 10, y = 0.5, label="r = 0.04 [-0.10, 0.17]", size = 3)+
   theme_bw() +
-  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10)) +
+  guides(size = "none", col = "none")
 
 
-f3/f2/f1  + plot_annotation(tag_levels = 'A')
+f4 <- ggplot(data = dat) +
+  geom_point(aes(y = log(Zr), x = log(abs_int), col = Category, size = total_n)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(y = "Zr (transformed variance accounted for)", x =   "ln(Absolute difference in standardized intercepts)") +
+  labs(color='Trait types',size = "Sample size (N)") +
+  annotate(geom="text", x= -2.5, y = -6, label="r = 0.70 [0.62., 0.77]", size = 3)+
+  theme_bw()   +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10)) +
+  guides(size = "none") +
+  theme(legend.position= c(0.03, 0.97), legend.justification = c(0, 0.97))
+  
+
+f5 <- ggplot(data = dat) +
+  geom_point(aes(y = log(Zr), x = log(abs_slope), col = Category, size = total_n)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(y = "Zr (transformed variance accounted for)" , x = "ln(Absolute difference in standardized slopes)") +
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x=  0, y = -6, label="r = 0.39 [0.26, 0.51]", size = 3)+
+  theme_bw() +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
+  guides(col = "none") +
+  scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) +
+  theme(legend.position = c(0.03, 0.97), legend.justification = c(0, 0.97))
+
+
+f6 <- ggplot(data = dat) +
+  geom_point(aes(y = log(Zr), x = log(abs_lnVR), col = Category, size = total_n)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(y = "Zr (transformed variance accounted for)", x = "ln(Absolute relative difference in SD)" )+
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x= -0.25, y = - 6, label="r = 0.16 [0.02, 0.30]", size = 3)+
+  theme_bw()  +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
+  guides(col = "none", size = "none") #+
+  #scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) 
+
+
+ (f3|f2)/(f1|f4)/(f5|f6)  + plot_annotation(tag_levels = 'A')
+
 ```
 
 **Fig. 4** Bivariate ordinations of log absolute difference between males and females (see the main text)
