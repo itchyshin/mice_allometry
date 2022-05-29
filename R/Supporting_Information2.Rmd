@@ -518,7 +518,7 @@ print.orchard <- function(object, ...){
 
 Below we see sub-strain information and sample size for each sub-strains
 
-```{r, eval=FALSE}
+```{r}
 
 # loading data
 allometry <- readRDS(here("data/allometryNEW.rds"))
@@ -595,7 +595,7 @@ dat_category<-read_csv(here("data/cateogry_parameter3.csv"))
 
 # Data preparation {.tabset}
 
-## Obtaining intersepcts, slopes and residual SDs
+## Obtaining intersepcts, slopes,  residual SDs and model fits
 
 ```{r,  eval=FALSE}
 
