@@ -1159,14 +1159,15 @@ barplot(
 Here we convert our effect sizes to absolute values assuming folded normal distributions. 
 
 ```{r}
-# for folded nornaml distribution see: https://en.wikipedia.org/wiki/Folded_normal_distribution
+## for folded normal distribution see: 
+## https://en.wikipedia.org/wiki/Folded_normal_distribution
 
 # folded mean
 folded_mu <-function(mean, variance){
   mu <- mean
   sigma <- sqrt(variance)
   fold_mu <- sigma*sqrt(2/pi)*exp((-mu^2)/(2*sigma^2)) + mu*(1 - 2*pnorm(-mu/sigma))
-  fold_muMA
+  fold_mu
 } 
 
 # folded variance
@@ -1188,7 +1189,6 @@ dat <- dat %>% mutate(abs_int = folded_mu(fm_diff_int, fm_diff_int_se^2),
                       V_abs_slope = folded_v(fm_diff_slope, fm_diff_slope_se^2),
                       V_abs_lnVR = folded_v(lnVR, VlnVR),
                       total_n = f_n + m_n)
-
 ```
 
 ## Comparing sex difference in intercepts
@@ -1410,11 +1410,7 @@ p6 <- orchard_plot2(model3a, mod = "Category", xlab = "Absolute relative differe
 
 ```
 
-
-```{r, echo = FALSE}
-include_graphics(here("fig", "Fig3.png"))
-```
-
+![](../fig/Fig3.png)
 
 **Fig. 3** Orchard plots illustrating results of multilevel meta-analyses (see the main text)
 
