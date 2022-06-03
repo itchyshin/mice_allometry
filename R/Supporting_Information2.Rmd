@@ -1,5 +1,5 @@
 ---
-title: "Supporting Information: 'Sex differences in allometry for phenotypic traits indicate that females are not scaled males' "
+title: "Supporting Information: 'Sex differences in allometry for mouse phenotypic traits indicate that females are not scaled males' "
 subtitle: "Laura A. B. Wilson, Susanne R. K. Zajitschek, Malgorzata Lagisz, Jeremy Mason, Hamed Haselimashhadi & Shinichi Nakagawa" 
 #authors: 
 date: "`r format(Sys.time(), '%d %B %Y')`"
@@ -25,7 +25,7 @@ echo = TRUE
 rm(list = ls())
 ```
 
-The document mainly provide the description of the main dataset, and the R scripts and their outputs for the paper "Sex differences in allometry for phenotypic traits indicate that females are not scaled males". 
+The document mainly provide the description of the main dataset, and the R scripts and their outputs for the paper "Sex differences in allometry for phenotypic traits indicate that females are not scaled males".
 
 # Setting-up {.tabset}
 
@@ -34,6 +34,7 @@ The document mainly provide the description of the main dataset, and the R scrip
 ```{r, results='hide'}
 # older version of the orchaRd package
 #devtools::install_github("itchyshin/orchard_plot", subdir = "orchaRd", force = TRUE, build_vignettes = TRUE)
+# install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
 
 pacman::p_load(tidyverse,
                purrr,
@@ -50,18 +51,19 @@ pacman::p_load(tidyverse,
                formatR,
                knitr,
                brms,
-               rstan
+               rstan, 
+               cmdstanr  
                )
-
+check_cmdstan_toolchain(fix = TRUE, quiet = TRUE)
 ```
 
-## Loading custum functions
+## Loading custom functions
 
 We load custom function not included in the packages above.
 
 -   functions for centering each group to its mean (group-wise centering): `groupScale`
--   functions for calculating 'parameters' (intercepts, slopes and residuals SDs for both males and females) : `get_parmetersN`
--   functions for drawing orchard plots (modified from the original): `orchard_plot2` and assoicated functions. 
+-   functions for calculating 'parameters' (intercepts, slopes and residuals SDs for both males and females and model fit) : `get_parmetersN`
+-   functions for drawing orchard plots (modified from the original): `orchard_plot2` and assoicated functions.
 
 ```{r}
 # custom function  for within-group cenering (or z transformation)
@@ -582,8 +584,7 @@ summary(factor(allometrynew2$strain_name))
 #saveRDS(all_list, file = here("data", "dat_list2.rds"))
 ```
 
-
-## Loading a list of trait data and group category 
+## Loading a list of trait data and group category
 
 ```{r,  eval=FALSE}
 # loading data
@@ -595,7 +596,7 @@ dat_category<-read_csv(here("data/cateogry_parameter3.csv"))
 
 # Data preparation {.tabset}
 
-## Obtaining intersepcts, slopes,  residual SDs and model fits
+## Obtaining intersepcts, slopes, residual SDs and model fits
 
 ```{r,  eval=FALSE}
 
@@ -650,45 +651,45 @@ kable(dat, "html") %>%
 
 ```
 
-- **parameter_name**: the name of phenotypic traits
-- **f_n**: the number of females for a particular trait
-- **m_n**: the number of males for a particular trait
-- **f_intercept**: the intercept (phenotypic mean) for females
-- **f_intercept_se**: standard error for the intercept (phenotypic mean) for females
-- **f_slope**: the slope for females
-- **f_slope_se**: standard error for the slope for females
-- **m_intercept**:  the intercept (phenotypic mean) for males
-- **m_intercept_se**: standard error for the intercept (phenotypic mean) for males
-- **m_slope**: the slope for males
-- **m_slope_se**: standard error for the slope for males
-- **fm_diff_int**: difference in intercepts between females and males
-- **fm_diff_int_se**: standard error for the difference in intercepts between females and males
-- **fm_diff_int_p**: p value associated with fm_diff_int
-- **fm_diff_slope**: difference in slopes between females and males
-- **fm_diff_slope_se**: standard error for for the difference in intercepts between females and males
-- **fm_diff_slope_p**: p value associated with fm_diff_slope
-- **batch_sd**: the square-root of the variance component for "batch" (see the text)
-- **f_sd**: female residual standard deviation
-- **m_sd**: female residual standard deviation
-- **r_m**: marginal R squared (variance accounted for by fixed effects)
-- **r_c**: conditional R squared (variance accounted for by fixed and random effects)
-- **Category**: 9 function categories (see the text)
-- **parameter_group**: Grouping for non-independent traits
-- **lnVR**: log ratio between f_sd and m_sd
-- **VlnVR**: the sampling variance for lnVR
-- **low_lnVR**: lower confidence limit for lnVR
-- **high_lnVR**: upper confidence limit for lnVR
-- **t_val_sd**: t values associated with lnVR and VlnVR
-- **p_val_sd**: p values associated with lnVR and VlnVR
-- **Zr**: transformed value of sqrt(r_c)
-- **VZr**: sampling variance for Zr
-- **obs**: unique observation level ID
+-   **parameter_name**: the name of phenotypic traits
+-   **f_n**: the number of females for a particular trait
+-   **m_n**: the number of males for a particular trait
+-   **f_intercept**: the intercept (phenotypic mean) for females
+-   **f_intercept_se**: standard error for the intercept (phenotypic mean) for females
+-   **f_slope**: the slope for females
+-   **f_slope_se**: standard error for the slope for females
+-   **m_intercept**: the intercept (phenotypic mean) for males
+-   **m_intercept_se**: standard error for the intercept (phenotypic mean) for males
+-   **m_slope**: the slope for males
+-   **m_slope_se**: standard error for the slope for males
+-   **fm_diff_int**: difference in intercepts between females and males
+-   **fm_diff_int_se**: standard error for the difference in intercepts between females and males
+-   **fm_diff_int_p**: p value associated with fm_diff_int
+-   **fm_diff_slope**: difference in slopes between females and males
+-   **fm_diff_slope_se**: standard error for for the difference in intercepts between females and males
+-   **fm_diff_slope_p**: p value associated with fm_diff_slope
+-   **batch_sd**: the square-root of the variance component for "batch" (see the text)
+-   **f_sd**: female residual standard deviation
+-   **m_sd**: female residual standard deviation
+-   **r_m**: marginal R squared (variance accounted for by fixed effects)
+-   **r_c**: conditional R squared (variance accounted for by fixed and random effects)
+-   **Category**: 9 function categories (see the text)
+-   **parameter_group**: Grouping for non-independent traits
+-   **lnVR**: log ratio between f_sd and m_sd
+-   **VlnVR**: the sampling variance for lnVR
+-   **low_lnVR**: lower confidence limit for lnVR
+-   **high_lnVR**: upper confidence limit for lnVR
+-   **t_val_sd**: t values associated with lnVR and VlnVR
+-   **p_val_sd**: p values associated with lnVR and VlnVR
+-   **Zr**: transformed value of sqrt(r_c)
+-   **VZr**: sampling variance for Zr
+-   **obs**: unique observation level ID
 
 # Data analysis {.tabset}
 
 ## Preparation for categorizing into scenarios
 
-Here, we merge p values for non-independent (closely related traits) using the custom functions for merging p values via the `poolr` package. 
+Here, we merge p values for non-independent (closely related traits) using the custom functions for merging p values via the `poolr` package.
 
 ```{r}
 # here we need to collapse p values which are related
@@ -838,7 +839,7 @@ dat_intslopesNS2 <-m_dat2 %>%
 nrow(dat_intslopesNS1)+ nrow(dat_intslopesNS2) 
 ```
 
-## Sex difference in residaul SD
+## Sex difference in residual SD
 
 ```{r}
 # full dataset
@@ -852,7 +853,7 @@ length(which(m_dat2$merged_p_sd <= 0.05)) + length(which(dat1$p_val_sd <= 0.05))
 
 ## Creating Figure 2
 
-```{r, fig.height= 8}
+```{r, eval = F, fig.height= 8}
 
 # set colour for males and females
 
@@ -1119,7 +1120,12 @@ p4 <-
 
 # putting all together
 (p1 + p2) / (p3 + p4) +   plot_annotation(tag_levels = 'A')
+
+# note that the key was inserted using Illustrator
+
 ```
+
+![](../fig/Fig2.png)
 
 **Fig. 2** Sex biases for mice phenotypic traits arrange in functional groups (see the main tex)
 
@@ -1150,13 +1156,13 @@ barplot(
 )
 ```
 
-**Fig. S1** The number of traits in each of 9 functional categories. 
+**Fig. S1** The number of traits in each of 9 functional categories.
 
 # Meta-analysis {.tabset}
 
 ## Calculating absolute effect sizes
 
-Here we convert our effect sizes to absolute values assuming folded normal distributions. 
+Here we convert our effect sizes to absolute values assuming folded normal distributions.
 
 ```{r}
 ## for folded normal distribution see: 
@@ -1193,7 +1199,7 @@ dat <- dat %>% mutate(abs_int = folded_mu(fm_diff_int, fm_diff_int_se^2),
 
 ## Comparing sex difference in intercepts
 
-This is a meta-analytic model of sex differences in intercepts (mean traits). We use the `rubust` function calculates to see whether our results form the model is robust (consistent). 
+This is a meta-analytic model of sex differences in intercepts (mean traits). We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
 
 ```{r}
 modelia <- rma.mv(yi = abs_int, 
@@ -1209,7 +1215,7 @@ robust(modelia, cluster  =  dat$parameter_group)
 i2_ml(modelia)
 ```
 
-This is a meta-regression model of sex differences in intercepts (mean traits) with a functional category as a moderator. We used the `rubust` function calculates to see whether our results form the model is robust (consistent). 
+This is a meta-regression model of sex differences in intercepts (mean traits) with a functional category as a moderator. We used the `rubust` function calculates to see whether our results form the model is robust (consistent).
 
 ```{r}
 model1a <- rma.mv(yi = abs_int, V= V_abs_int, mod = ~ Category - 1,
@@ -1223,7 +1229,7 @@ r2_ml(model1a)
 
 ## Comparing sex difference in slopes
 
-This is a meta-analytic model of sex differences in slopes. We used the `rubust` function calculates to see whether our results form the model is robust (consistent).  
+This is a meta-analytic model of sex differences in slopes. We used the `rubust` function calculates to see whether our results form the model is robust (consistent).
 
 ```{r}
 modelsa <- rma.mv(yi = abs_slope, V= V_abs_slope, 
@@ -1236,7 +1242,7 @@ robust(modelsa, cluster  =  dat$parameter_group)
 i2_ml(modelia)
 ```
 
-This is a meta-regression model of sex differences in slopes with a functional category as a moderator. We use the `rubust` function calculates to see whether our results form the model is robust (consistent). 
+This is a meta-regression model of sex differences in slopes with a functional category as a moderator. We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
 
 ```{r}
 model2a <- rma.mv(yi = abs_slope, V= V_abs_slope,
@@ -1249,10 +1255,9 @@ robust(model2a, cluster  =  dat$parameter_group)
 r2_ml(model2a)
 ```
 
-
 ## Comparing sex difference in resdiaul SDs
 
-This is a meta-analytic model of sex differences in residual SDs. We use the `rubust` function calculates to see whether our results form the model is robust (consistent). 
+This is a meta-analytic model of sex differences in residual SDs. We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
 
 ```{r}
 modelsda <- rma.mv(yi = abs_lnVR, V= V_abs_lnVR, 
@@ -1265,7 +1270,7 @@ robust(modelsda, cluster  =  dat$parameter_group)
 i2_ml(modelsda)
 ```
 
-This is a meta-regression model of sex differences in residual SDs with a functional category as a moderator. We use the `rubust` function calculates to see whether our results form the model is robust (consistent). 
+This is a meta-regression model of sex differences in residual SDs with a functional category as a moderator. We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
 
 ```{r}
 # meta-regression
@@ -1277,9 +1282,9 @@ summary(model3a)
 r2_ml(model3a)
 ```
 
-## Comparing model fits 
+## Comparing model fits
 
-This is a meta-analytic model of Zr (transformed model fits). We use the `rubust` function calculates to see whether our results form the model is robust (consistent). 
+This is a meta-analytic model of Zr (transformed model fits). We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
 
 ```{r}
 modelr0 <- rma.mv(yi = Zr, 
@@ -1293,7 +1298,7 @@ robust(modelr0, cluster  =  dat$parameter_group)
 i2_ml(modelr0)
 ```
 
-This is a meta-regression model of Zr (transformed model fits). with a functional category as a moderator. We use the `rubust` function calculates to see whether our results form the model is robust (consistent). 
+This is a meta-regression model of Zr (transformed model fits). with a functional category as a moderator. We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
 
 ```{r}
 # meta-regression
@@ -1307,7 +1312,7 @@ summary(modelr1)
 r2_ml(modelr1)
 ```
 
-## Obtaining correlations among intercepts, slopes and SDs
+## Obtaining correlations among intercepts, slopes, SDs and model fits
 
 ```{r, eval = FALSE}
 
@@ -1335,7 +1340,6 @@ fit_4b <- readRDS(here("data", "fit2.rds"))
 
 summary(fit_4b)
 ```
-
 
 ## Creating Figure 3
 
