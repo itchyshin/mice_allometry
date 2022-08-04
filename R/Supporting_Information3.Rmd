@@ -1,5 +1,5 @@
 ---
-title: "Supporting Information: 'Sex differences in allometry for mouse phenotypic traits indicate that females are not scaled males' "
+title: "Supporting Information: 'Sex differences in allometry for phenotypic traits in mice indicate that females are not scaled males' "
 subtitle: "Laura A. B. Wilson, Susanne R. K. Zajitschek, Malgorzata Lagisz, Jeremy Mason, Hamed Haselimashhadi & Shinichi Nakagawa" 
 #authors: 
 date: "`r format(Sys.time(), '%d %B %Y')`"
@@ -25,7 +25,7 @@ echo = TRUE
 rm(list = ls())
 ```
 
-The document mainly provide the description of the main dataset, and the R scripts and their outputs for the paper "Sex differences in allometry for phenotypic traits indicate that females are not scaled males".
+This document mainly provides the description of the main dataset, and the R scripts and their outputs for the paper "Sex differences in allometry for phenotypic traits indicate that females are not scaled males".
 
 # Setting-up {.tabset}
 
@@ -62,7 +62,6 @@ check_cmdstan_toolchain(fix = TRUE, quiet = TRUE)
 
 We load custom function not included in the packages above.
 
--   functions for centering each group to its mean (group-wise centering): `groupScale`
 -   functions for calculating 'parameters' (intercepts, slopes and residuals SDs for both males and females and model fit) : `get_parmetersN`
 -   functions for drawing orchard plots (modified from the original): `orchard_plot2` and assoicated functions.
 
@@ -558,7 +557,7 @@ allometrynew2 <- allometrynew %>%
 # # the number of substrains
 # length(unique(allometrynew2$strain_name))
 # strain information
-summary(factor(allometrynew2$strain_name))
+unique(allometrynew2$strain_name)
 
 # # check there is no 0
 # sum(is.infinite(log(allometrynew2$data_point2)))
@@ -691,7 +690,7 @@ dat1 <- dat[which(dat$count == 1), ]
 # 
 #dim(dat1)
 
-#  taking out indepedent traits
+#  taking out independent traits
 dat2 <- dat[-which(dat$count == 1), ]
 
 # nesting data into a lot of data sets and apply p_mod function
@@ -749,15 +748,12 @@ m_dat2 <- n_dat2  %>% mutate(merged_p_sd = map_dbl(data, p_mod_sd),
 ## The number of cases Scenario A
 
 ```{r}
-#TODO
-# we only have 
-
 
 # full dataset
 dat_slopes <-dat %>%
   filter (fm_diff_slope_p <= 0.05 & fm_diff_int_p > 0.05)
 
-#16 out of 375 traits sig slope diff - scenario A
+#17 out of 363 traits sig slope diff - scenario A
 nrow(dat_slopes)
 
 # reduced dataset
@@ -767,7 +763,7 @@ dat_slopes1 <-dat1 %>%
 dat_slopes2 <-m_dat2 %>%
   filter (merged_p_slp <= 0.05 & merged_p_int > 0.05)
 
-#11 out of 226 traits sig slope diff - scenario A
+#11 out of 219 traits sig slope diff - scenario A
 nrow(dat_slopes1)+ nrow(dat_slopes2) 
 ```
 
@@ -778,7 +774,7 @@ nrow(dat_slopes1)+ nrow(dat_slopes2)
 dat_int<- dat %>%
   filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p >0.05)
 
-#165 out of 375 traits sig intercept diff  same slope - scenario B
+#154 out of 363 traits sig intercept diff  same slope - scenario B
 nrow(dat_int) 
 
 # reduced dataset
@@ -788,7 +784,7 @@ dat_int1<- dat1 %>%
 dat_int2 <-m_dat2 %>%
   filter (merged_p_int <= 0.05 & merged_p_slp > 0.05)
 
-#93 out of 226 traits sig intercept diff  same slope - scenario B
+#93 out of 219 traits sig intercept diff  same slope - scenario B
 nrow(dat_int1)+ nrow(dat_int2) 
 ```
 
@@ -799,7 +795,7 @@ nrow(dat_int1)+ nrow(dat_int2)
 dat_intSlopes<-dat %>%
   filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p <= 0.05)
 
-#81 out of 375 sig intercept and slope diff - scenario C
+#70 out of 363 sig intercept and slope diff - scenario C
 nrow(dat_intSlopes)
 
 # reduced dataset
@@ -809,7 +805,7 @@ dat_intSlopes1<-dat1 %>%
 dat_intSlopes2 <-m_dat2 %>%
   filter (merged_p_int <= 0.05 & merged_p_slp <= 0.05)
 
-#67 out of 226 sig intercept and slope diff - scenario C
+#57 out of 219 sig intercept and slope diff - scenario C
 nrow(dat_intSlopes1)+ nrow(dat_intSlopes2) 
 ```
 
@@ -819,7 +815,7 @@ nrow(dat_intSlopes1)+ nrow(dat_intSlopes2)
 # full dataset
 dat_intslopesNS<- dat %>%
   filter (fm_diff_slope_p >0.05 & fm_diff_int_p > 0.05)
-#113 out of 375 - no sig difference between intercept and slope - scenario D
+#122 out of 363 - no sig difference between intercept and slope - scenario D
 nrow(dat_intslopesNS) 
 
 # reduced dataset
@@ -829,7 +825,7 @@ dat_intslopesNS1<- dat1 %>%
 dat_intslopesNS2 <-m_dat2 %>%
   filter (merged_p_int > 0.05 & merged_p_slp > 0.05)
 
-#55 out of 226 no sig difference between intercept and slope - scenario D
+#58 out of 219 no sig difference between intercept and slope - scenario D
 nrow(dat_intslopesNS1)+ nrow(dat_intslopesNS2) 
 ```
 
@@ -837,11 +833,11 @@ nrow(dat_intslopesNS1)+ nrow(dat_intslopesNS2)
 
 ```{r}
 # full dataset
-# 261 out of 375 signficant differences in residual SDs
+# 249 out of 363 signficant differences in residual SDs
 length(which(dat$p_val_sd <= 0.05))
 #hist(log(dat$p_val_sd)) # p = 0.05 ~ - 3
 
-# 161 of out of 226 signficant differences in residual SDs
+# 154 of out of 219 signficant differences in residual SDs
 length(which(m_dat2$merged_p_sd <= 0.05)) + length(which(dat1$p_val_sd <= 0.05))
 ```
 
