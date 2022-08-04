@@ -123,6 +123,7 @@ rod b-wave amplitude-right,Eye,rod b-wave amplitude
 rod b-wave implicit time,Eye,rod b-wave implicit time
 rod b-wave implicit time-left,Eye,rod b-wave implicit time
 rod b-wave implicit time-right,Eye,rod b-wave implicit time
+rod a-wave amplitude-right,Eye,rod a-wave amplitude
 % pre-pulse inhibition - global,Hearing,pre-pulse inhibition
 % pre-pulse inhibition - ppi1,Hearing,pre-pulse inhibition
 % pre-pulse inhibition - ppi2,Hearing,pre-pulse inhibition
@@ -186,9 +187,9 @@ large unstained cell (luc) count,Hematology,luc
 large unstained cell (luc) differential count,Hematology,luc
 lymphocyte cell count,Hematology,lymphocytes
 lymphocyte differential count,Hematology,lymphocytes
-mean cell hemoglobin concentration,Hematology,mean cell hemoglobin concentration
+mean cell hemoglobin concentration,Hematology,hemoglobin
 mean cell volume,Hematology,mean cell volume
-mean corpuscular hemoglobin,Hematology,mean corpuscular hemoglobin
+mean corpuscular hemoglobin,Hematology,hemoglobin
 mean platelet volume,Hematology,mean platelet volume
 monocyte cell count,Hematology,monocytes
 monocyte differential count,Hematology,monocytes
@@ -341,6 +342,7 @@ number of thoracic vertebrae,Morphology,number of thoracic vertebrae
 right kidney,Morphology,kidney weight
 spleen weight,Morphology,spleen weight
 tibia length,Morphology,tibia length
+number of ribs left,Morphology,number of ribs
 alanine aminotransferase,Physiology,alanine aminotransferase
 albumin,Physiology,albumin
 albumin to creatinine ratio,Physiology,albumin to creatinine ratio
@@ -374,3 +376,4 @@ triglycerides,Physiology,triglycerides
 uibc (unsaturated iron binding capacity),Physiology,uibc (unsaturated iron binding capacity)
 urea (blood urea nitrogen - bun),Physiology,urea (blood urea nitrogen - bun)
 uric acid,Physiology,uric acid
+glycosilated hemoglobin a1c (hba1c),Physiology,hemoglobin
