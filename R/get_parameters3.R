@@ -81,24 +81,17 @@ saveRDS(all_list, file = here("data", "dat_list2.rds"))
 
 # TODO getting new parameter estimates
 
-# custom function  for within-group cenering (or z transformation)
-groupScale <- function(formula, data=NULL, center=TRUE, scale=FALSE){
-  if(is.null(data)) data <- model.frame(formula)
-  scaled <- rep(NA,nrow(data)) #empty vector
-  for(i in unique(data[,2])){
-    elements <- which(data[,2]==i)
-    scaled[elements] <- scale(data[elements,1], scale=scale, center=center) 
-  }
-  return(scaled)
-}
+
+# how many models would have more than one substrain??
+
+
 
 
 # function to get what we need from these 2 models (you can include models in this function as well)
 get_parmetersN<- function(i){
   
-  # centering weights separately for each 
-  
-  ln_c_weight <- groupScale(log(i[["weight"]]) ~ i[["sex"]])
+  # grand-mean centering of weights
+  ln_c_weight <- scale(log(i[["weight"]]), center = TRUE, scale = TRUE)
   i[,"ln_c_weight"] <- ln_c_weight
   
   if(i[["nmeta"]][1] == 1 && i[["nstrain"]][1] == 1){

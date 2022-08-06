@@ -1,0 +1,249 @@
+parameter_name,procedure_name,delta_aic,p_value,Category,parameter_group
+center average speed,Open Field,-10.328547096825787,9.70985515598984e-4,Behaviour,center average speed
+center distance travelled,Open Field,-84.25249472391442,1.9334097692812615e-19,Behaviour,center distance travelled
+center permanence time,Open Field,-1138.0364931029326,1.0166491331483374e-247,Behaviour,center time
+center resting time,Open Field,-105.03438237939554,6.572322269970798e-24,Behaviour,center time
+conditioning baseline freeze count,Fear Conditioning,6.143433656790876,0.986158459619346,Behaviour,conditioning baseline freeze count
+conditioning baseline freezing time,Fear Conditioning,6.140959132604621,0.9865051699440618,Behaviour,conditioning baseline freezing time
+conditioning post-shock freeze count,Fear Conditioning,6.136419409647715,0.9871344424508394,Behaviour,conditioning post-shock freeze count
+conditioning post-shock freezing time,Fear Conditioning,6.15269594755955,0.9848381372935718,Behaviour,conditioning post-shock freezing time
+conditioning tone freeze count,Fear Conditioning,5.999741155522315,0.9999988925007557,Behaviour,conditioning tone freeze count
+conditioning tone freezing time,Fear Conditioning,5.999981643762112,0.9999999790833595,Behaviour,conditioning tone freezing time
+context freeze count,Fear Conditioning,6.0278828370524025,0.998772011401717,Behaviour,context freeze count
+context freezing time,Fear Conditioning,6.005436178056698,0.9998935731628076,Behaviour,context freezing time
+cue baseline freeze count,Fear Conditioning,6.142071212012979,0.9863496746015598,Behaviour,cue baseline freeze count
+cue baseline freezing time,Fear Conditioning,6.041819383437996,0.9977538271112607,Behaviour,cue baseline freezing time
+dark side time spent,Light-Dark Test,5.999927953675069,0.9999998373600738,Behaviour,time spent
+distance travelled - total,Open Field,-250.21694952597318,2.95886757024945e-55,Behaviour,distance travelled - total
+forelimb and hindlimb grip strength measurement mean,Grip Strength,-2142.3423967949348,0,Behaviour,limb strength
+forelimb and hindlimb grip strength normalised against body weight,Grip Strength,-2173.0234025443788,0,Behaviour,limb strength
+forelimb grip strength measurement mean,Grip Strength,-1775.4958016099117,0,Behaviour,limb strength
+forelimb grip strength normalised against body weight,Grip Strength,-1736.0578228359518,0,Behaviour,limb strength
+latency to center entry,Open Field,-14.514236636226997,0.00013278862079157651,Behaviour,latency to center entry
+latency to first transition into dark,Light-Dark Test,6.1592830251283885,0.9838781456941396,Behaviour,latency to first transition into dark
+light side time spent,Light-Dark Test,6.15812185413597,0.9840486109738709,Behaviour,time spent
+locomotor activity,Combined SHIRPA and Dysmorphology,-230.99076028828858,4.2583084717904593e-51,Behaviour,locomotor activity
+percent time in dark,Light-Dark Test,6.137715268858301,0.9869557235129717,Behaviour,percent time
+percent time in light,Light-Dark Test,6.0000501576469105,0.9999999055247603,Behaviour,percent time
+percentage center time,Open Field,-1089.8172424321237,2.941129343218496e-237,Behaviour,percentage center time
+periphery average speed,Open Field,-3.6564290663663996,0.02172414788377263,Behaviour,periphery average speed
+periphery distance travelled,Open Field,-511.89745804508857,6.308033598208192e-112,Behaviour,periphery distance travelled
+periphery permanence time,Open Field,-1402.8808824747102,3.4840844085517875e-305,Behaviour,periphery time
+periphery resting time,Open Field,-175.7228048441466,3.744635410474536e-39,Behaviour,periphery time
+side changes,Light-Dark Test,5.9999978783744154,0.999999999178095,Behaviour,side changes
+time mobile dark side,Light-Dark Test,6.026794643748872,0.9988428159699339,Behaviour,time mobile
+time mobile light side,Light-Dark Test,6.154131144838175,0.9846304357681633,Behaviour,time mobile
+whole arena average speed,Open Field,-13214.924959170472,0,Behaviour,whole arena average speed
+whole arena permanence,Open Field,29.87562862050254,2.6518863688378272e-5,Behaviour,whole arena
+whole arena resting time,Open Field,-7096.045415480214,0,Behaviour,whole arena
+left inner nuclear layer,Eye Morphology,6.000000000001876,0.9999999999999999,Eye,inner nuclear layer
+left outer nuclear layer,Eye Morphology,5.999999999999773,1,Eye,outer nuclear layer
+left total retinal thickness,Eye Morphology,5.9950262351503625,0.9999068465919267,Eye,total retinal thickness
+max left eye lens density,Eye Morphology,5.999999999996362,1,Eye,max eye lens density
+max right eye lens density,Eye Morphology,6.000000000003638,1,Eye,max eye lens density
+mean left eye lens density,Eye Morphology,6.0000000000045475,1,Eye,mean eye lens density
+mean right eye lens density,Eye Morphology,5.9999999999990905,1,Eye,mean eye lens density
+min left eye lens density,Eye Morphology,6,1,Eye,min eye lens density
+min right eye lens density,Eye Morphology,5.999999999998181,1,Eye,min eye lens density
+right inner nuclear layer,Eye Morphology,5.9999999999996305,1,Eye,inner nuclear layer
+right outer nuclear layer,Eye Morphology,6.000000000000114,1,Eye,outer nuclear layer
+right total retinal thickness,Eye Morphology,6.000236621739532,0.9999990320120701,Eye,total retinal thickness
+% pre-pulse inhibition - global,Acoustic Startle and Pre-pulse Inhibition (PPI),-8.987940651742974,0.0018269835626358903,Hearing,pre-pulse inhibition
+% pre-pulse inhibition - ppi1,Acoustic Startle and Pre-pulse Inhibition (PPI),-0.34023353179509286,0.09618078705588212,Hearing,pre-pulse inhibition
+% pre-pulse inhibition - ppi2,Acoustic Startle and Pre-pulse Inhibition (PPI),-22.39798243351106,2.996380447790164e-6,Hearing,pre-pulse inhibition
+% pre-pulse inhibition - ppi3,Acoustic Startle and Pre-pulse Inhibition (PPI),-21.035020322728087,5.788663978430655e-6,Hearing,pre-pulse inhibition
+% pre-pulse inhibition - ppi4,Acoustic Startle and Pre-pulse Inhibition (PPI),0.10031563654047204,0.11659411618780471,Hearing,pre-pulse inhibition
+12khz-evoked abr threshold,Auditory Brain Stem Response,8.729366573323205,0.4352597993952584,Hearing,abr threshold
+18khz-evoked abr threshold,Auditory Brain Stem Response,7.807290916745842,0.6133496372552888,Hearing,abr threshold
+24khz-evoked abr threshold,Auditory Brain Stem Response,6.370928476804693,0.946180295927047,Hearing,abr threshold
+30khz-evoked abr threshold,Auditory Brain Stem Response,-3.15023721401667,0.02735867291745836,Hearing,abr threshold
+6khz-evoked abr threshold,Auditory Brain Stem Response,11.491978827827552,0.1391191601950882,Hearing,abr threshold
+click-evoked abr threshold,Auditory Brain Stem Response,5.273084017440851,0.8668555133903013,Hearing,abr threshold
+response amplitude - bn,Acoustic Startle and Pre-pulse Inhibition (PPI),6.984458220918896,0.8050125361554948,Hearing,response amplitude
+response amplitude - pp1,Acoustic Startle and Pre-pulse Inhibition (PPI),-1.1770732755539939,0.06646296453859393,Hearing,response amplitude
+response amplitude - pp1_s,Acoustic Startle and Pre-pulse Inhibition (PPI),-156.212604845874,6.104017341955131e-35,Hearing,response amplitude
+response amplitude - pp2,Acoustic Startle and Pre-pulse Inhibition (PPI),-19.094636298686964,1.4752749850061225e-5,Hearing,response amplitude
+response amplitude - pp2_s,Acoustic Startle and Pre-pulse Inhibition (PPI),-143.5122067645134,3.3573092487618674e-32,Hearing,response amplitude
+response amplitude - pp3,Acoustic Startle and Pre-pulse Inhibition (PPI),-14.64290664458531,1.248712243159149e-4,Hearing,response amplitude
+response amplitude - pp3_s,Acoustic Startle and Pre-pulse Inhibition (PPI),-164.08516426107963,1.219776832559426e-36,Hearing,response amplitude
+response amplitude - pp4,Acoustic Startle and Pre-pulse Inhibition (PPI),-64.83186918745196,2.8321479059751256e-15,Hearing,response amplitude
+response amplitude - pp4_s,Acoustic Startle and Pre-pulse Inhibition (PPI),-187.02886613424926,1.3530011080275613e-41,Hearing,response amplitude
+response amplitude - s,Acoustic Startle and Pre-pulse Inhibition (PPI),-136.33989782174467,1.1827879329372944e-30,Hearing,response amplitude
+aortic diameter (dao),Echo,1.4228625361993181,0.20551214086750344,Heart,aortic diameter (dao)
+cardiac output,Echo,3.868561243893055,0.5455787193918655,Heart,cardiac output
+cv,Electrocardiogram (ECG),-986.5906863558048,7.285059446538303e-215,Heart,cv
+ejection fraction,Echo,-142.10070311267918,6.768038905449789e-32,Heart,ejection fraction
+end-diastolic diameter,Echo,6.161161947778055,0.9836012042039879,Heart,end-diastolic diameter
+end-systolic diameter,Echo,6.1645255118774,0.9831020534624718,Heart,end-systolic diameter
+fractional shortening,Echo,-112.96597814392953,1.2886149207610642e-25,Heart,fractional shortening
+heart weight,Heart Weight,-16.807714086404303,4.4286524684522896e-5,Heart,heart weight
+heart weight normalised against body weight,Heart Weight,-11.975428253033897,4.4501208091817055e-4,Heart,heart weight
+heart weight normalised against tibia length,Heart Weight,5.9998456914077,0.9999994902187402,Heart,heart weight
+hr,Echo,-709.5157122430101,9.06969280688291e-155,Heart,hr
+hrv,Electrocardiogram (ECG),-833.0062102558004,1.5012591184266366e-181,Heart,hrv
+lvawd,Echo,-20.20364431910093,8.645433223437e-6,Heart,lvawd
+lvaws,Echo,-31.601670550591734,3.432143665458595e-8,Heart,lvaws
+lvidd,Echo,-23.856036388489883,1.4797128328367467e-6,Heart,lvidd
+lvids,Echo,-28.04713302235905,1.9363119752969935e-7,Heart,lvids
+lvpwd,Echo,-104.29233861253306,9.493386621438316e-24,Heart,lvpwd
+lvpws,Echo,-102.24809599776927,2.6141630331922263e-23,Heart,lvpws
+mean r amplitude,Electrocardiogram (ECG),-1002.1174643054837,3.120325210202895e-218,Heart,mean r amplitude
+mean sr amplitude,Electrocardiogram (ECG),-822.0131433574934,3.636743573338311e-179,Heart,mean sr amplitude
+pnn5(6>ms),Electrocardiogram (ECG),-360.2840594026202,4.440757172943623e-79,Heart,pnn5(6>ms)
+pq,Electrocardiogram (ECG),-67.00248271175951,9.708508902368054e-16,Heart,pq
+pr,Electrocardiogram (ECG),-45.48706613441027,3.852270347295757e-11,Heart,pr
+qrs,Electrocardiogram (ECG),-848.2202922795404,7.527536859115724e-185,Heart,qrs
+qtc,Electrocardiogram (ECG),-226.70093284158065,3.6043588818422117e-50,Heart,qtc
+qtc dispersion,Electrocardiogram (ECG),-406.11146255036874,5.267813244277814e-89,Heart,qtc dispersion
+respiration rate,Echo,3.8269246270465374,0.5372711352432737,Heart,respiration rate
+rmssd,Electrocardiogram (ECG),-914.0553057623911,3.9522747067758794e-199,Heart,rmssd
+rr,Electrocardiogram (ECG),-1447.2444005886573,8.22992564e-315,Heart,rr
+st,Electrocardiogram (ECG),-223.19932189185783,2.0602927513419496e-49,Heart,st
+stroke volume,Echo,-2.1240862219274277,0.043515633908287346,Heart,stroke volume
+basophil cell count,Hematology,6.000112994457595,0.9999996805596318,Hematology,basophil count
+basophil differential count,Hematology,6.000250229306403,0.99999894732705,Hematology,basophil count
+eosinophil cell count,Hematology,6.000038508253056,0.9999999364457622,Hematology,eosinophils
+eosinophil differential count,Hematology,6.000669214321533,0.9999953965921137,Hematology,eosinophils
+eosinophils,Immunophenotyping,-2.318466235907181,0.03986867682605987,Hematology,eosinophils
+hematocrit,Hematology,20.147747208859073,0.0027107879951489616,Hematology,hematocrit
+hemoglobin,Hematology,14.3843226270983,0.03870208246325919,Hematology,hemoglobin
+large unstained cell (luc) count,Hematology,6.000000186097168,0.9999999999786485,Hematology,luc
+large unstained cell (luc) differential count,Hematology,6.000045481931011,0.9999999184223438,Hematology,luc
+lymphocyte cell count,Hematology,5.999999999978172,1,Hematology,lymphocytes
+lymphocyte differential count,Hematology,6.000000001040462,0.9999999999999911,Hematology,lymphocytes
+mean cell hemoglobin concentration,Hematology,62.35007470640994,3.537005491498736e-12,Hematology,hemoglobin
+mean cell volume,Hematology,3.4687536545388866,0.4696706258808329,Hematology,mean cell volume
+mean corpuscular hemoglobin,Hematology,32.89319720832282,6.198823134771579e-6,Hematology,hemoglobin
+mean platelet volume,Hematology,15.209490591172653,0.026631443546486423,Hematology,mean platelet volume
+monocyte cell count,Hematology,6.000000002561137,0.9999999999999656,Hematology,monocytes
+monocyte differential count,Hematology,6.000000073232513,0.9999999999947292,Hematology,monocytes
+monocytes,Immunophenotyping,-56.35993129575036,1.8403901256267267e-13,Hematology,monocytes
+neutrophil cell count,Hematology,6.000000000029104,1,Hematology,neutrophils
+neutrophil differential count,Hematology,6.0000000000873115,0.9999999999999998,Hematology,neutrophils
+neutrophils,Immunophenotyping,-141.03753348682767,1.1475814673227519e-31,Hematology,neutrophils
+platelet count,Hematology,21.693464118710835,0.0013104485547262054,Hematology,platelet count
+red blood cell count,Hematology,5.564125714954571,0.9327359597871636,Hematology,red blood cell count
+red blood cell distribution width,Hematology,-90.72839759801718,7.849366265738165e-21,Hematology,red blood cell distribution width
+white blood cell count,Hematology,-26.33196120185312,4.4546971938108866e-7,Hematology,white blood cell count
+b cells,Immunophenotyping,-174.79428146327973,5.94203950285901e-39,Immunology,B cells
+b1b cells,Immunophenotyping,-68.72065182639744,4.158884131037116e-16,Immunology,B cells
+b2b cells,Immunophenotyping,-172.82474341678335,1.582205076209498e-38,Immunology,B cells
+cd4 cd25- nkt cells,Immunophenotyping,-123.23824289365075,7.892779529526603e-28,Immunology,cd4 nkt
+cd4 cd25- t cells,Immunophenotyping,-144.36560477462717,2.197344167360264e-32,Immunology,cd4 t
+cd4 cd25+ nkt cells,Immunophenotyping,-41.04000369830919,3.4081703953371996e-10,Immunology,cd4 nkt
+cd4 cd25+ t cells,Immunophenotyping,-48.1705066780205,1.031933160234326e-11,Immunology,cd4 t
+cd4 cd44-cd62l- t cells,Immunophenotyping,-82.15838864500438,5.445855508386983e-19,Immunology,cd4 t
+cd4 cd44-cd62l+ nkt cells,Immunophenotyping,-26.09281911429025,5.00295937183702e-7,Immunology,cd4 nkt
+cd4 cd44+cd62l- nkt cells,Immunophenotyping,-118.43657788374549,8.546798972410239e-27,Immunology,cd4 nkt
+cd4 cd44+cd62l- t cells,Immunophenotyping,-178.17545690759198,1.1058666411973797e-39,Immunology,cd4 t
+cd4 cd44+cd62l+ nkt cells,Immunophenotyping,-141.85107468948172,7.661388863017469e-32,Immunology,cd4 nkt
+cd4 cd44+cd62l+ t cells,Immunophenotyping,-86.52228209248915,6.291077833767919e-20,Immunology,cd4 t
+cd4 nkt cells,Immunophenotyping,-148.27636974119469,3.1491250287425024e-33,Immunology,cd4 nkt
+cd4 t cells,Immunophenotyping,-164.57177626189696,9.576948168122183e-37,Immunology,cd4 t
+cd8 cd25- nkt cells,Immunophenotyping,-98.71643671424772,1.5036670265695677e-22,Immunology,cd8 nkt
+cd8 cd25- t cells,Immunophenotyping,-150.69044517298244,9.490936766889584e-34,Immunology,cd8 t
+cd8 cd25+ nkt cells,Immunophenotyping,1.3037194249973254,0.1954365881062074,Immunology,cd8 nkt
+cd8 cd44-cd62l- t cells,Immunophenotyping,-106.22302682884037,3.64653075330611e-24,Immunology,cd8 t
+cd8 cd44-cd62l+ t cells,Immunophenotyping,-26.7857105067842,3.5739078163470617e-7,Immunology,cd8 t
+cd8 cd44+cd62l- nkt cells,Immunophenotyping,-82.74652953601617,4.071601062812578e-19,Immunology,cd8 nkt
+cd8 cd44+cd62l- t cells,Immunophenotyping,-162.29949012879115,2.9632575393254122e-36,Immunology,cd8 t
+cd8 cd44+cd62l+ nkt cells,Immunophenotyping,-88.56507315474937,2.2897208608555478e-20,Immunology,cd8 nkt
+cd8 cd44+cd62l+ t cells,Immunophenotyping,-126.7556247316852,1.3777933786175862e-28,Immunology,cd8 t
+cd8 nkt cells,Immunophenotyping,-107.98543102928033,1.5223133250285264e-24,Immunology,cd8 nkt
+cd8 t cells,Immunophenotyping,-161.4037839028315,4.625134165042351e-36,Immunology,cd8 t
+cdcs,Immunophenotyping,-116.52327707882523,2.2078012415855843e-26,Immunology,cdcs
+dn cd25- nkt cells,Immunophenotyping,-31.744218138636825,3.201789656680953e-8,Immunology,dn nkt
+dn cd25- t cells,Immunophenotyping,-112.54454737806373,1.5880996380845848e-25,Immunology,dn t
+dn cd25+ nkt cells,Immunophenotyping,0.13726224773017748,0.11848268668418258,Immunology,dn nkt
+dn cd25+ t cells,Immunophenotyping,-32.72439525402933,1.9853931156512665e-8,Immunology,dn t
+dn cd44-cd62l- t cells,Immunophenotyping,-111.11581295855649,3.2250322072462146e-25,Immunology,dn t
+dn cd44-cd62l+ nkt cells,Immunophenotyping,-44.26004499003648,7.032635165674275e-11,Immunology,dn nkt
+dn cd44-cd62l+ t cells,Immunophenotyping,-55.45113147610573,2.878483328270956e-13,Immunology,dn t
+dn cd44+cd62l- nkt cells,Immunophenotyping,-95.51386525593443,7.344524286372399e-22,Immunology,dn nkt
+dn cd44+cd62l- t cells,Immunophenotyping,-89.13424383962956,1.727687162369655e-20,Immunology,dn t
+dn cd44+cd62l+ nkt cells,Immunophenotyping,-42.47988073629767,1.6832347884384246e-10,Immunology,dn nkt
+dn nkt cells,Immunophenotyping,-86.51991361586079,6.298453452422692e-20,Immunology,dn nkt
+dn t cells,Immunophenotyping,-121.2601065186791,2.1060976260271925e-27,Immunology,dn t
+follicular b cells,Immunophenotyping,-51.332528578092024,2.1823595674766927e-12,Immunology,follicular b cells
+follicular b cells (cd21/35+),Immunophenotyping,-122.16649582393347,1.3433095124898208e-27,Immunology,follicular b cells
+mzb,Immunophenotyping,6.000000000000227,1,Immunology,mzb
+mzb (cd21/35 high),Immunophenotyping,-91.87758710238631,4.444314013922627e-21,Immunology,mzb
+nk cells (panel a),Immunophenotyping,-153.0465590716376,2.9436490384893988e-34,Immunology,nk cells
+nk subsets (q1),Immunophenotyping,-206.75481732147364,7.392396838346604e-46,Immunology,nk cells
+nk subsets (q2),Immunophenotyping,3.121381365554953,0.41072086829230514,Immunology,nk cells
+nk subsets (q3),Immunophenotyping,-142.83300141287873,4.704388784749928e-32,Immunology,nk cells
+nk subsets (q4),Immunophenotyping,3.849218959684549,0.5417079175310279,Immunology,nk cells
+nkt cells (panel a),Immunophenotyping,-158.6235626278267,1.8418239613228571e-35,Immunology,nkt cells
+nkt cells (panel b),Immunophenotyping,5.989973464415925,0.9997337809131046,Immunology,nkt cells
+nkt subsets (q1),Immunophenotyping,6.413745211218156,0.9373886462036433,Immunology,nkt cells
+nkt subsets (q3),Immunophenotyping,7.0989982343116935,0.777315919337383,Immunology,nkt cells
+others,Immunophenotyping,-248.09613753833764,8.508697563011633e-55,Immunology,others
+pdcs,Immunophenotyping,-221.06636469607474,5.957746407726879e-49,Immunology,pdcs
+percentage of live gated events in panel a,Immunophenotyping,4.226612008151278,0.6207430579783749,Immunology,percentage of live gated events
+percentage of live gated events in panel b,Immunophenotyping,-0.8040169516152673,0.07841381594777239,Immunology,percentage of live gated events
+rp macrophage (f4/80+),Immunophenotyping,5.9997390788121265,0.9999988791465508,Immunology,rp macrophage (f4/80+)
+t cells (panel a),Immunophenotyping,-176.30969674386233,2.79679208613918e-39,Immunology,t cells
+t cells (panel b),Immunophenotyping,-17.74441907349592,2.8244882930964997e-5,Immunology,t cells
+t subset,Immunophenotyping,-6.720853978667947,0.005280861449676916,Immunology,t cells
+total number of acquired events in panel a,Immunophenotyping,-222.08600293926065,3.586202891039114e-49,Immunology,number events
+transitional b cells,Immunophenotyping,5.999999999999545,0.9999999999999999,Immunology,B cells
+transitional b cells (cd21/35 low),Immunophenotyping,-60.70658035912675,2.163936870414612e-14,Immunology,B cells
+area under glucose response curve,Intraperitoneal glucose tolerance test (IPGTT),-147.09000670455862,5.6774128982785385e-33,Metabolism,area under glucose response curve
+fasted blood glucose concentration,Intraperitoneal glucose tolerance test (IPGTT),-2854.277014841966,0,Metabolism,fasted blood glucose concentration
+glucose,Clinical Chemistry,-86.50676004984416,6.339572274847735e-20,Metabolism,glucose
+initial response to glucose challenge,Intraperitoneal glucose tolerance test (IPGTT),-570.9875795815315,9.81777489257202e-125,Metabolism,initial response to glucose challenge
+insulin,Insulin Blood Level,6.002254712202557,0.9999715447938794,Metabolism,insulin
+respiratory exchange ratio,Indirect Calorimetry,-134.92871165935503,2.3834629576825627e-30,Metabolism,respiratory exchange ratio
+total food intake,Indirect Calorimetry,-34.7938544312492,7.231762369194878e-9,Metabolism,total food intake
+total water intake,Indirect Calorimetry,5.9999912696112006,0.9999999931393062,Metabolism,total water intake
+body length,Body Composition (DEXA lean/fat),-16167.11619435533,0,Morphology,body length
+bone area,Body Composition (DEXA lean/fat),-4339.181637867805,0,Morphology,bone area
+bone mineral content (excluding skull),Body Composition (DEXA lean/fat),-5977.7393643878895,0,Morphology,bone mineral content (excluding skull)
+bone mineral density (excluding skull),Body Composition (DEXA lean/fat),-10143.658797320852,0,Morphology,bone mineral density (excluding skull)
+fat mass,Body Composition (DEXA lean/fat),-5140.736037329509,0,Morphology,fat mass
+fat/body weight,Body Composition (DEXA lean/fat),-5172.966151710192,0,Morphology,fat mass
+lean mass,Body Composition (DEXA lean/fat),-8704.184620241926,0,Morphology,lean mass
+lean/body weight,Body Composition (DEXA lean/fat),-8569.981619461221,0,Morphology,lean mass
+number of caudal vertebrae,X-ray,-75.19001535639472,1.7051287037353617e-17,Morphology,number of caudal vertebrae
+number of center entries,Open Field,-15.573277118382975,8.00218246247001e-5,Morphology,number of center entries
+number of cervical vertebrae,X-ray,11.626153457080363,0.13128495361730969,Morphology,number of cervical vertebrae
+number of digits,X-ray,5.449540274130413,0.9076737248503906,Morphology,number of digits
+number of lumbar vertebrae,X-ray,4.626624501317565,0.7117873561985045,Morphology,number of lumbar vertebrae
+number of pelvic vertebrae,X-ray,5.856814374943497,0.9861933283156175,Morphology,number of pelvic vertebrae
+number of rears - total,Open Field,-791.3351988156792,1.637440978547736e-172,Morphology,number of rears - total
+number of ribs left,X-ray,-19.15327827357396,1.4341998533486697e-5,Morphology,number of ribs
+number of ribs right,X-ray,11.5078898275533,0.13816747916573593,Morphology,number of ribs
+number of signals,Electrocardiogram (ECG),-682.8928806435142,5.37596736507887e-149,Morphology,number of signals
+number of thoracic vertebrae,X-ray,6.000111851186375,0.9999996853953581,Morphology,number of thoracic vertebrae
+spleen weight,Immunophenotyping,-1.7509795933874557,0.05144855941704557,Morphology,spleen weight
+tibia length,X-ray,-1268.0320663971943,6.3434076324351146e-276,Morphology,tibia length
+alanine aminotransferase,Clinical Chemistry,7.765792522375705,0.6224070042096953,Physiology,alanine aminotransferase
+albumin,Clinical Chemistry,1.3496341525024036,0.199263784631134,Physiology,albumin
+alkaline phosphatase,Clinical Chemistry,4.958972953114426,0.7913259770837993,Physiology,alkaline phosphatase
+alpha-amylase,Clinical Chemistry,22.72741036240768,8.040807275273774e-4,Physiology,alpha-amylase
+aspartate aminotransferase,Clinical Chemistry,21.100146845987183,0.001733035953698529,Physiology,aspartate aminotransferase
+body temp,Echo,6.150930563993825,0.9850924905951363,Physiology,body temp
+calcium,Clinical Chemistry,51.841567028910504,6.128887248919584e-10,Physiology,calcium
+chloride,Clinical Chemistry,36.9176470863822,8.846728292645372e-7,Physiology,chloride
+creatine kinase,Clinical Chemistry,6.055478233465692,0.9965818899437523,Physiology,creatine kinase
+creatinine,Clinical Chemistry,21.706018714874517,0.0013027127740158407,Physiology,creatinine
+free fatty acids,Clinical Chemistry,12.004732602683362,0.1113802005698509,Physiology,free fatty acids
+fructosamine,Clinical Chemistry,3.1300676887622103,0.41211681654360793,Physiology,fructosamine
+glycerol,Clinical Chemistry,-4.003084831969318,0.01853993145268069,Physiology,glycerol
+hdl-cholesterol,Clinical Chemistry,-48.82532144083234,7.481326907466345e-12,Physiology,hdl-cholesterol
+iron,Clinical Chemistry,-8.947326725086896,0.001862219651098943,Physiology,iron
+lactate dehydrogenase,Clinical Chemistry,6.260017124653132,0.9673639826699324,Physiology,lactate dehydrogenase
+ldl-cholesterol,Clinical Chemistry,12.483283933845087,0.09032408057770715,Physiology,ldl-cholesterol
+lipase,Clinical Chemistry,11.497378897771341,0.13879547239354575,Physiology,lipase
+magnesium,Clinical Chemistry,-3.8213924514457176,0.020147002456835265,Physiology,magnesium
+phosphorus,Clinical Chemistry,24.767991646789596,3.0531941502196674e-4,Physiology,phosphorus
+potassium,Clinical Chemistry,-21.136517291990458,5.511857113835749e-6,Physiology,potassium
+sodium,Clinical Chemistry,44.44383383681998,2.276495398124376e-8,Physiology,sodium
+thyroxine,Clinical Chemistry,6,1,Physiology,thyroxine
+total bilirubin,Clinical Chemistry,-20.579643249860965,7.211439395629337e-6,Physiology,total bilirubin
+total cholesterol,Clinical Chemistry,-73.20446896071371,4.5463822626065e-17,Physiology,total cholesterol
+total protein,Clinical Chemistry,9.346352819164167,0.34124312594648293,Physiology,total protein
+triglycerides,Clinical Chemistry,-51.60825557798671,1.9057251751954354e-12,Physiology,triglycerides
+uibc (unsaturated iron binding capacity),Clinical Chemistry,-11.514399314486582,5.538464080030863e-4,Physiology,uibc (unsaturated iron binding capacity)
+urea (blood urea nitrogen - bun),Clinical Chemistry,-8.59764640845242,0.002194863104835755,Physiology,urea (blood urea nitrogen - bun)
+uric acid,Clinical Chemistry,6.115378404497278,0.9899301551856917,Physiology,uric acid
