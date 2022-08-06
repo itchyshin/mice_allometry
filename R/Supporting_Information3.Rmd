@@ -1089,7 +1089,7 @@ dat_p3$samplesize<-with(dat_p3,
                         ifelse(sex == "malepercent", malebias, ifelse(sex == "mixedpercent", mixed, femalebias)) )
 
 
-# addeng All
+# adding All
 dat_p3 %>%  group_by(sex) %>% summarise(malebias = sum(malebias), 
                                         mixed = sum(mixed),
                                         femalebias= sum(femalebias),
