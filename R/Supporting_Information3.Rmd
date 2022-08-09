@@ -1623,7 +1623,7 @@ f3 <- ggplot(data = dat) +
 
 ## Creating Figure S2
 
-```{r, eval = F}
+```{r, fig.height= 12}
 
 f4 <- ggplot(data = dat) +
   geom_point(aes(y = log(Zr), x = log(abs_int), col = Category, size = total_n)) + 
