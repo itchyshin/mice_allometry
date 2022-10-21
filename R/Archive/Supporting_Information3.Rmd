@@ -1,0 +1,1677 @@
+---
+title: "Supporting Information: 'Sex differences in allometry for phenotypic traits in mice indicate that females are not scaled males' "
+subtitle: "Laura A. B. Wilson, Susanne R. K. Zajitschek, Malgorzata Lagisz, Jeremy Mason, Hamed Haselimashhadi & Shinichi Nakagawa" 
+#authors: 
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: 
+    
+    rmdformats::readthedown:
+      code_folding: show #hide
+      code_download: true
+      toc_depth: 4
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+message = FALSE,
+warning = FALSE,
+cache = TRUE, 
+tidy = TRUE, 
+echo = TRUE
+)
+
+rm(list = ls())
+```
+
+This document mainly provides the description of the main dataset, and the R scripts and their outputs for the paper "Sex differences in allometry for phenotypic traits indicate that females are not scaled males".
+
+# Setting-up {.tabset}
+
+## Loading packages
+
+```{r, results='hide'}
+# older version of the orchaRd package
+#devtools::install_github("itchyshin/orchard_plot", subdir = "orchaRd", force = TRUE, build_vignettes = TRUE)
+#install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+
+pacman::p_load(tidyverse,
+               purrr,
+               metafor, 
+               poolr,
+               patchwork,
+               orchaRd, # older version: 
+               broom.mixed,
+               here,
+               nlme,
+               pander,
+               brms,
+               kableExtra,
+               formatR,
+               knitr,
+               brms,
+               rstan,
+               cmdstanr
+               )
+
+check_cmdstan_toolchain(fix = TRUE, quiet = TRUE)
+```
+
+## Loading custom functions
+
+We load custom function not included in the packages above.
+
+-   functions for calculating 'parameters' (intercepts, slopes and residuals SDs for both males and females and model fit) : `get_parmetersN`
+-   functions for drawing orchard plots (modified from the original): `orchard_plot2` and assoicated functions.
+
+```{r}
+
+# function to get what we need from these 2 models (you can include models in this function as well)
+get_parmetersN<- function(i){
+  
+  # grand-mean centering of weights
+  ln_c_weight <- scale(log(i[["weight"]]), center = TRUE, scale = TRUE)
+  i[,"ln_c_weight"] <- ln_c_weight
+  
+  if(i[["nmeta"]][1] == 1 && i[["nstrain"]][1] == 1){
+  
+    # female model 
+    model_f <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(#metadata_group = ~ ln_c_weight, 
+                                #strain_name = ~ ln_c_weight,
+                                 date_of_experiment = ~ 1),
+                   weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    
+    # male model
+    model_m <- lme(log(data_point2) ~ relevel(sex, ref = "male")*ln_c_weight, 
+                   random = list(#metadata_group = ~ ln_c_weight, 
+                                 #strain_name = ~ ln_c_weight,
+                                 date_of_experiment = ~ 1),
+                   weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    # neutral model
+    model_n <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(#metadata_group = ~ ln_c_weight, 
+                                 #strain_name = ~ ln_c_weight,
+                                 date_of_experiment = ~ 1),
+                   #weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+      
+  } else if (i[["nmeta"]][1] == 1) {
+    
+    # female model 
+    model_f <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(#metadata_group = ~ ln_c_weight, 
+                     strain_name = ~ ln_c_weight,
+                     date_of_experiment = ~ 1),
+                   weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    
+    # male model
+    model_m <- lme(log(data_point2) ~ relevel(sex, ref = "male")*ln_c_weight, 
+                   random = list(#metadata_group = ~ ln_c_weight, 
+                     strain_name = ~ ln_c_weight,
+                     date_of_experiment = ~ 1),
+                   weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    # neutral model
+    model_n <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(#metadata_group = ~ ln_c_weight, 
+                     strain_name = ~ ln_c_weight,
+                     date_of_experiment = ~ 1),
+                   #weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    
+  } else if (i[["nstrain"]][1] == 1){
+    
+    # female model 
+    model_f <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(metadata_group = ~ ln_c_weight, 
+                     #strain_name = ~ ln_c_weight,
+                     date_of_experiment = ~ 1),
+                   weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    
+    # male model
+    model_m <- lme(log(data_point2) ~ relevel(sex, ref = "male")*ln_c_weight, 
+                   random = list(metadata_group = ~ ln_c_weight, 
+                     #strain_name = ~ ln_c_weight,
+                     date_of_experiment = ~ 1),
+                   weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    # neutral model
+    model_n <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(metadata_group = ~ ln_c_weight, 
+                     #strain_name = ~ ln_c_weight,
+                     date_of_experiment = ~ 1),
+                   #weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+  } else {
+    # female model 
+    model_f <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(metadata_group = ~ ln_c_weight, 
+                                 strain_name = ~ ln_c_weight,
+                                 date_of_experiment = ~ 1),
+                   weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    
+    # male model
+    model_m <- lme(log(data_point2) ~ relevel(sex, ref = "male")*ln_c_weight, 
+                   random = list(metadata_group = ~ ln_c_weight, 
+                                 strain_name = ~ ln_c_weight,
+                                 date_of_experiment = ~ 1),
+                   weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    # neutral model
+    model_n <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(metadata_group = ~ ln_c_weight, 
+                                 strain_name = ~ ln_c_weight,
+                                 date_of_experiment = ~ 1),
+                   #weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+  }
+  # getting all we want
+  females <- broom.mixed::tidy(model_f)
+  males <- broom.mixed::tidy(model_m)
+  # gets variance weights
+  weights <- attr(model_f$modelStruct$varStruct, "weights")
+  male_correction <- 1/weights[which(names(weights) == "male")[1]]
+  female_correction <- 1/weights[which(names(weights) == "female")[1]]
+  
+  # get parameters
+  parameter_name <- tolower(i[["parameter_name"]][1])
+  procedure_name <- i[["procedure_name"]][1]# "procedure_name"
+  m_n <- sum(i[["sex"]] == "male") # sample size for males 
+  f_n <- sum(i[["sex"]] == "female") # N fo females
+  f_intercept <- as.numeric(females[1, 4])
+  f_intercept_se <- as.numeric(females[1, 5])
+  f_slope <- as.numeric(females[3, 4])
+  f_slope_se <- as.numeric(females[3, 5])
+  m_intercept <- as.numeric(males[1, 4])
+  m_intercept_se <- as.numeric(males[1, 5])
+  m_slope  <- as.numeric(males[3, 4])
+  m_slope_se  <- as.numeric(males[3, 5])
+  fm_diff_int  <- as.numeric(males[2, 4])
+  fm_diff_int_se  <- as.numeric(males[2, 5])
+  fm_diff_int_p  <- as.numeric(males[2, 8])
+  fm_diff_slope <- as.numeric(males[4, 4])
+  fm_diff_slope_se <- as.numeric(males[4, 5])
+  fm_diff_slope_p <- as.numeric(males[4, 8])
+  
+  # variance component
+  #group_sd <- as.numeric(VarCorr(model_f)[,2][2])
+  #g_slope_sd <- as.numeric(VarCorr(model_f)[,2][3])
+  #batch_sd <- as.numeric(VarCorr(model_f)[,2][5])
+  f_sd <- as.numeric(tail(VarCorr(model_f)[,2],1))*female_correction
+  m_sd <- as.numeric(tail(VarCorr(model_f)[,2],1))*male_correction
+  
+  # model fit
+  r_m <- sqrt(MuMIn::r.squaredGLMM(model_n)[1,1])
+  r_c <- sqrt(MuMIn::r.squaredGLMM(model_n)[1,2])
+  # putting it together
+  paras <- data.frame(parameter_name, procedure_name, 
+             f_n, m_n, f_intercept, f_intercept_se, f_slope, f_slope_se, 
+             m_intercept, m_intercept_se, m_slope, m_slope_se, 
+             fm_diff_int, fm_diff_int_se, fm_diff_int_p,
+             fm_diff_slope, fm_diff_slope_se, fm_diff_slope_p,
+             f_sd, m_sd, r_m, r_c)
+  names(paras) <- c('parameter_name', 'procedure_name', 
+                    'f_n', 'm_n','f_intercept', 'f_intercept_se', 'f_slope', 'f_slope_se',
+                    'm_intercept', 'm_intercept_se', 'm_slope', 'm_slope_se',
+                    'fm_diff_int', 'fm_diff_int_se', 'fm_diff_int_p',
+                    'fm_diff_slope', 'fm_diff_slope_se', 'fm_diff_slope_p',
+                    'f_sd', 'm_sd', 'r_m', 'r_c') # variance component
+  invisible(paras)
+  
+}
+
+# function to compare two models
+get_strain_p<- function(i){
+  
+  # centering weights separately for each 
+  ln_c_weight <- scale(log(i[["weight"]]), center = TRUE, scale = TRUE)
+  i[,"ln_c_weight"] <- ln_c_weight
+  
+  if (i[["nmeta"]][1] == 1) {
+    
+    # model with strain as random factor 
+    model_1 <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(#metadata_group = ~ ln_c_weight, 
+                     strain_name = ~ ln_c_weight,
+                     date_of_experiment = ~ 1),
+                   #weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    
+    # model without strain as random factor 
+    model_2 <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(#metadata_group = ~ ln_c_weight, 
+                     #strain_name = ~ ln_c_weight,
+                     date_of_experiment = ~ 1),
+                   #weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    
+    
+    
+  }  else {
+
+    # model with strain as random factor 
+    model_1 <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(metadata_group = ~ ln_c_weight, 
+                                 strain_name = ~ ln_c_weight,
+                                 date_of_experiment = ~ 1),
+                   #weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    # model without strain as random factor 
+    model_2 <- lme(log(data_point2) ~ sex*ln_c_weight, 
+                   random = list(metadata_group = ~ ln_c_weight, 
+                                 #strain_name = ~ ln_c_weight,
+                                 date_of_experiment = ~ 1),
+                   #weights = varIdent(form = ~1 | sex),
+                   control = lmeControl(opt = "optim"),
+                   data = i)
+    
+  }
+  
+  # anova 
+  p_value <- anova(model_1, model_2)$p[[2]]
+  delta_aic <- anova(model_1, model_2)$AIC[1] - anova(model_1, model_2)$AIC[2] 
+  
+  # get parameters
+  parameter_name <- tolower(i[["parameter_name"]][1])
+  procedure_name <- i[["procedure_name"]][1]# "procedure_name"
+  
+  paras <- data.frame(parameter_name, procedure_name, delta_aic, p_value)
+  names(paras) <- c('parameter_name', 'procedure_name', 'delta_aic', 'p_value') # variance component
+  invisible(paras)
+  
+}
+
+
+# getting ride of traits which do not run
+get_para_poss <- possibly(.f = get_parmetersN, 
+                          otherwise = NULL)
+
+
+# getting ride of traits with do not run
+
+get_para_poss2 <- possibly(.f = get_strain_p, 
+                          otherwise = NULL)
+
+# functions
+
+orchard_plot2 <- function (object, mod = "Int", xlab, N = "none", alpha = 0.5, 
+          angle = 90, cb = FALSE, k = TRUE, transfm = c("none", "tanh"), 
+          point.size = 2.5, branch.size = 5,
+          condition.lab = "Condition", legend.on = TRUE) 
+{
+  transfm <- match.arg(transfm)
+  if (any(class(object) %in% c("rma.mv", "rma"))) {
+    if (mod != "Int") {
+      object <- mod_results(object, mod)
+    }
+    else {
+      object <- mod_results(object, mod = "Int")
+    }
+  }
+  mod_table <- object$mod_table
+  data <- object$data
+  data$moderator <- factor(data$moderator, levels = mod_table$name, 
+                           labels = mod_table$name)
+  data$scale <- (1/sqrt(data[, "vi"]))
+  legend <- "Precision (1/SE)"
+ 
+  # sample size 
+  if(any(N != "none")){
+    data$scale <- N
+    legend <- "Sample size (N)" # we want to use italic
+  }
+  
+  if (transfm == "tanh") {
+    cols <- sapply(mod_table, is.numeric)
+    mod_table[, cols] <- Zr_to_r(mod_table[, cols])
+    data$yi <- Zr_to_r(data$yi)
+    label <- xlab
+  }
+  else {
+    label <- xlab
+  }
+  mod_table$K <- as.vector(by(data, data[, "moderator"], function(x) length(x[, 
+                                                                              "yi"])))
+  group_no <- length(unique(mod_table[, "name"]))
+  cbpl <- c("#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
+            "#CC79A7", "#56B4E9", "#999999")
+  if (names(mod_table)[2] == "condition") {
+    condition_no <- length(unique(mod_table[, "condition"]))
+    plot <- ggplot2::ggplot() + ggbeeswarm::geom_quasirandom(data = data, 
+                                                             ggplot2::aes(y = yi, x = moderator, size = scale, 
+                                                                          colour = moderator), alpha = alpha) + ggplot2::geom_hline(yintercept = 0, 
+                                                                                                                                    linetype = 2, colour = "black", alpha = alpha) + 
+      ggplot2::geom_linerange(data = mod_table, ggplot2::aes(x = name, 
+                                                             ymin = lowerCL, ymax = upperCL), size = branch.size, 
+                              position = ggplot2::position_dodge2(width = 0.3)) + 
+      ggplot2::geom_pointrange(data = mod_table, ggplot2::aes(y = estimate, 
+                                                              x = name, ymin = lowerPR, ymax = upperPR, shape = as.factor(condition), 
+                                                              fill = name), size = 0.5, position = ggplot2::position_dodge2(width = 0.3)) + 
+      ggplot2::scale_shape_manual(values = 20 + (1:condition_no)) + 
+      ggplot2::coord_flip() + ggplot2::theme_bw() + ggplot2::guides(fill = "none", 
+                                                                    colour = "none") + ggplot2::theme(legend.position = c(0, 
+                                                                                                                          1), legend.justification = c(0, 1)) + ggplot2::theme(legend.title = ggplot2::element_text(size = 9)) + 
+      ggplot2::theme(legend.direction = "horizontal") + 
+      ggplot2::theme(legend.background = ggplot2::element_blank()) + 
+      ggplot2::labs(y = label, x = "", size = legend) + 
+      ggplot2::scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) + 
+      ggplot2::labs(shape = condition.lab) + ggplot2::theme(axis.text.y = ggplot2::element_text(size = 10, 
+                                                                                                colour = "black", hjust = 0.5, angle = angle))
+    plot <- plot + ggplot2::annotate("text", y = (max(data$yi) + 
+                                                    (max(data$yi) * 0.1)), x = (seq(1, group_no, 1) + 
+                                                                                  0.3), label = paste("italic(k)==", mod_table$K[1:group_no]), 
+                                     parse = TRUE, hjust = "right", size = 3.5)
+  }
+  else {
+    plot <- ggplot2::ggplot(data = mod_table, ggplot2::aes(x = estimate, 
+                                                           y = name)) + ggbeeswarm::geom_quasirandom(data = data, 
+                                                                                                     ggplot2::aes(x = yi, y = moderator, size = scale, 
+                                                                                                                  colour = moderator), groupOnX = FALSE, alpha = alpha) + 
+      ggplot2::geom_errorbarh(ggplot2::aes(xmin = lowerPR, 
+                                           xmax = upperPR), height = 0, show.legend = FALSE, 
+                              size = 0.5, alpha = 0.6) + ggplot2::geom_errorbarh(ggplot2::aes(xmin = lowerCL, 
+                                                                                              xmax = upperCL), height = 0, show.legend = FALSE, 
+                                                                                 size = branch.size) + ggplot2::geom_vline(xintercept = 0, 
+                                                                                                                   linetype = 2, colour = "black", alpha = alpha) + 
+      ggplot2::geom_point(ggplot2::aes(fill = name), size = point.size, 
+                          shape = 21) + ggplot2::theme_bw() + ggplot2::guides(fill = "none", 
+                                                                              colour = "none") + ggplot2::theme(legend.position = c(1, 
+                                                                                                                                    0), legend.justification = c(1, 0)) + ggplot2::theme(legend.title = ggplot2::element_text(size = 9)) + 
+      ggplot2::theme(legend.direction = "horizontal") + 
+      ggplot2::theme(legend.background = ggplot2::element_blank()) + 
+      ggplot2::labs(x = label, y = "", size = legend) + 
+      ggplot2::scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) + 
+      ggplot2::theme(axis.text.y = ggplot2::element_text(size = 10, 
+                                                         colour = "black", hjust = 0.5, angle = angle))
+    if (k == TRUE) {
+      plot <- plot + ggplot2::annotate("text", x = (max(data$yi) + 
+                                                      (max(data$yi) * 0.1)), y = (seq(1, group_no, 
+                                                                                      1) + 0.3), label = paste("italic(k)==", mod_table$K), 
+                                       parse = TRUE, hjust = "right", size = 3.5)
+    }
+  }
+  if (cb == TRUE) {
+    plot <- plot + ggplot2::scale_fill_manual(values = cbpl) + 
+      ggplot2::scale_colour_manual(values = cbpl)
+  }
+  
+  if (legend.on == FALSE){
+    plot <- plot + ggplot2::theme(legend.position = "none")
+  }
+  
+  
+  return(plot)
+}
+
+# mod_result old
+
+#' @title get_est
+#' @description Function gets estimates from rma objects (metafor)
+#' @param model rma.mv object
+#' @param mod the name of a moderator. If meta-analysis (i.e. no moderator, se mod = "Int")
+#' @author Shinichi Nakagawa - s.nakagawa@unsw.edu.au
+#' @author Daniel Noble - daniel.noble@anu.edu.au
+#' @export
+
+get_est <- function (model, mod) {
+  name <- firstup(as.character(stringr::str_replace(row.names(model$beta), {{mod}}, "")))
+  
+  estimate <- as.numeric(model$beta)
+  lowerCL <- model$ci.lb
+  upperCL <- model$ci.ub
+  
+  table <- tibble::tibble(name = factor(name, levels = name, labels = name), estimate = estimate, lowerCL = lowerCL, upperCL = upperCL)
+  
+  return(table)
+}
+
+
+#' @title get_pred
+#' @description Function to get prediction intervals (crediblity intervals) from rma objects (metafor)
+#' @param model rma.mv object
+#' @param mod the name of a moderator
+#' @author Shinichi Nakagawa - s.nakagawa@unsw.edu.au
+#' @author Daniel Noble - daniel.noble@anu.edu.au
+#' @export
+
+get_pred <- function (model, mod) {
+  
+  name <- firstup(as.character(stringr::str_replace(row.names(model$beta), {{mod}}, "")))
+  len <- length(name)
+  
+  if(len != 1){
+    newdata <- matrix(NA, ncol = len, nrow = len)
+    
+    pred <- metafor::predict.rma(model, newmods = diag(len),
+                                 tau2.levels = 1:len,
+                                 gamma2.levels = 1:len)
+  }
+  else {
+    pred <- metafor::predict.rma(model)
+  }
+  lowerPR <- pred$cr.lb
+  upperPR <- pred$cr.ub
+  
+  table <- tibble::tibble(name = factor(name, levels = name, labels = name), lowerPR = lowerPR, upperPR = upperPR)
+  return(table)
+}
+
+#' @title firstup
+#' @description Uppercase moderator names
+#' @param x a character string
+#' @author Shinichi Nakagawa - s.nakagawa@unsw.edu.au
+#' @author Daniel Noble - daniel.noble@anu.edu.au
+#' @return Returns a character string with all combinations of the moderator level names with upper case first letters
+#' @export
+firstup <- function(x) {
+  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+  x
+}
+
+#' @title get_data
+#' @description Collects and builds the data used to fit the rma.mv or rma model in metafor
+#' @param model rma.mv object
+#' @param mod the moderator variable
+#' @author Shinichi Nakagawa - s.nakagawa@unsw.edu.au
+#' @author Daniel Noble - daniel.noble@anu.edu.au
+#' @return Returns a data frame
+#' @export
+#'
+get_data <- function(model, mod){
+  X <- as.data.frame(model$X)
+  names <- vapply(stringr::str_split(colnames(X), {{mod}}), function(x) paste(unique(x), collapse = ""), character(1L))
+  
+  moderator <- matrix(ncol = 1, nrow = dim(X)[1])
+  
+  for(i in 1:ncol(X)){
+    moderator <- ifelse(X[,i] == 1, names[i], moderator)
+  }
+  moderator <- firstup(moderator)
+  yi <- model$yi
+  vi <- model$vi
+  type <- attr(model$yi, "measure")
+  
+  data <- data.frame(yi, vi, moderator, type)
+  return(data)
+  
+}
+
+#' @title mod_results
+#' @description Using a metafor model object of class rma or rma.mv it creates a table of model results containing the mean effect size estimates for all levels of a given categorical moderator, their corresponding confidence intervals and prediction intervals
+#' @param model rma.mv object
+#' @param mod the name of a moderator; put "Int" if the intercept model (meta-analysis) or no moderators.
+#' @return A data frame containing all the model results including mean effect size estimate, confidence and prediction intervals
+#' @author Shinichi Nakagawa - s.nakagawa@unsw.edu.au
+#' @author Daniel Noble - daniel.noble@anu.edu.au
+#' @examples
+#' \dontrun{data(eklof)
+#' eklof<-metafor::escalc(measure="ROM", n1i=N_control, sd1i=SD_control,
+#' m1i=mean_control, n2i=N_treatment, sd2i=SD_treatment, m2i=mean_treatment,
+#' data=eklof)
+#' # Add the unit level predictor
+#' eklof$Datapoint<-as.factor(seq(1, dim(eklof)[1], 1))
+#' # fit a MLMR - accouting for some non-independence
+#' eklof_MR<-metafor::rma.mv(yi=yi, V=vi, mods=~ Grazer.type-1, random=list(~1|ExptID,
+#' ~1|Datapoint), data=eklof)
+#' results <- mod_results(eklof_MR, mod = "Grazer.type")
+#' }
+#' @export
+
+mod_results <- function(model, mod) {
+  
+  if(all(class(model) %in% c("rma.mv", "rma.uni", "rma")) == FALSE) {stop("Sorry, you need to fit a metafor model of class rma.mv or rma")}
+  
+  data <- get_data(model, mod)
+  
+  # Get confidence intervals
+  CI <- get_est(model, mod)
+  
+  # Get prediction intervals
+  PI <- get_pred(model, mod)
+  
+  model_results <- list(mod_table = cbind(CI, PI[,-1]), data = data)
+  
+  class(model_results) <- "orchard"
+  
+  return(model_results)
+  
+}
+# TODO - I think we can improve `mod` bit?
+
+#' @title print.orchard
+#' @description Print method for class 'orchard'
+#' @param object x an R object of class orchard
+#' @param ... Other arguments passed to print
+#' @author Shinichi Nakagawa - s.nakagawa@unsw.edu.au
+#' @author Daniel Noble - daniel.noble@anu.edu.au
+#' @return Returns a data frame
+#' @export
+#'
+print.orchard <- function(object, ...){
+  return(object$mod_table)
+}
+
+```
+
+## Loading raw data and creating a list of trait data
+
+Below we see sub-strain information and sample size for each sub-strains
+
+```{r}
+
+# loading data
+allometry <- readRDS(here("data/allometryNEW.rds"))
+
+
+#STEP 1 remove rows with missing  data and NA 
+allometrynew<-allometry[complete.cases(allometry),]
+
+# getting rid of NA for data_point and weight
+
+allometrynew2 <- allometrynew %>% 
+  filter(!is.na(data_point), !is.na(weight)) %>% 
+  group_by(parameter_name, sex, metadata_group, strain_name) %>%
+  mutate(count = n()) %>% 
+  ungroup() %>% 
+  group_by(parameter_name) %>% # adjusting interval data
+  mutate(min_val = min(data_point),
+         data_point2 = if_else(min_val > 0, data_point, data_point + abs(min_val)),
+         min_val2 = min( data_point[data_point!=min(data_point)]),
+         data_point2 = if_else(min_val == 0, data_point2 + min_val2, data_point2),
+         ratio_int =  if_else(min_val > 0, "ratio", "interval"),
+         new_min = min(data_point2),
+         nmeta = n_distinct(metadata_group),
+         nstrain = n_distinct(strain_name),
+         sex = as.factor(sex),
+         parameter_name = if_else(parameter_name == "Latency to fall_Mean", 
+                                  "Latency to fall mean"  , parameter_name)) %>% 
+  ungroup() %>% 
+  filter(count > 49) %>% # this can be adjusted
+  filter(parameter_name != "BMC/Body weight", 
+         parameter_name != "Body weight",  
+         parameter_name != "Body Weight", 
+         parameter_name != "Body weight after experiment" , 
+         parameter_name != "Body weight before experiment",
+         parameter_name != "Test duration") %>% 
+  filter(!is.infinite(data_point2), !is.infinite(log(data_point2))) # removing infite and 0
+
+# dim(allometry)
+# dim(allometrynew)
+# dim(allometrynew2)
+# 
+# # the number of traits
+# length(unique(allometrynew2$parameter_name))
+# 
+# # the number of substrains
+# length(unique(allometrynew2$strain_name))
+# strain information
+unique(allometrynew2$strain_name)
+
+# # check there is no 0
+# sum(is.infinite(log(allometrynew2$data_point2)))
+
+# # the number of interval scale traits
+# allometrynew2 %>% group_by(parameter_name) %>% summarise(ratio_int = ratio_int[1]) -> sum_ri
+# sum(sum_ri$ratio_int == "interval")
+
+
+#split dataframe by parameter to generate a list of dfs
+#all_list<-split(allometrynew2, allometrynew2$parameter_name)
+
+#saveRDS(all_list, file = here("data", "dat_list2.rds"))
+```
+
+## Loading a list of trait data and group category
+
+```{r,  eval=FALSE}
+# loading data
+dat_list <- readRDS(here("data/dat_list2.rds"))
+
+# grouping for category and parameter_group (this is from Zajitschek et al. 2020 eLife; slightly modfied)
+dat_category<-read_csv(here("data/cateogry_parameter3.csv")) 
+```
+
+# Data preparation {.tabset}
+
+## Obtaining intersepcts, slopes, residual SDs and model fits
+
+```{r,  eval=FALSE}
+
+#run function across list of matrices
+processing <-map_dfr(dat_list, get_para_poss)
+dat <- data.frame(processing, row.names = NULL)
+
+dat %>% left_join(dat_category, by = ("parameter_name" = "parameter_name") ) %>% arrange(Category)  -> dat
+
+dim(dat)
+
+#write_csv(dat, here("data/test4.csv"))
+write_csv(dat, here("data/data_parameters7.csv"))
+
+
+# first getting p values - the contrasts between males and females for 
+
+dat <-read_csv(here("data/data_parameters7.csv"))
+
+#assess number of traits with sig shifts in intercept and slope
+
+# getting lnVR to compare SDs and SD and Zr (variance for Zr)
+
+dat %>% mutate(lnVR = log(f_sd/m_sd) + 1/(2*(f_n-3)) - 1/(2*(m_n-3)), 
+               VlnVR = 1/(2*(f_n-3)) + 1/(2*(m_n-3)), 
+               low_lnVR = lnVR - qnorm(0.975)*VlnVR, 
+               high_lnVR = lnVR + qnorm(0.975)*VlnVR,
+               t_val_sd = lnVR/sqrt(VlnVR),
+               p_val_sd = 2*(1-pt(abs(t_val_sd), f_n-1 + m_n-1)),
+               # r squared
+               Zr = atanh(r_m),
+               VZr = 1/((f_n + m_n) - 3)
+               ) -> dat
+
+write_csv(dat, here("data/data_parameters8.csv"))
+```
+
+## Dataset and meta-data
+
+```{r}
+# loading data
+dat <- read_csv(here("data/data_parameters8.csv"))
+# creating observation level random effect
+dat$obs <- 1:dim(dat)[1]
+# making character strings into factors
+dat <- dat %>% mutate_if(is.character, as.factor) 
+# visualizing
+kable(dat, "html") %>% 
+  kable_styling("striped", position = "left") %>% 
+  scroll_box(width = "100%", 
+    height = "250px")
+
+```
+
+-   **parameter_name**: the name of phenotypic traits
+-   **f_n**: the number of females for a particular trait
+-   **m_n**: the number of males for a particular trait
+-   **f_intercept**: the intercept (phenotypic mean) for females
+-   **f_intercept_se**: standard error for the intercept (phenotypic mean) for females
+-   **f_slope**: the slope for females
+-   **f_slope_se**: standard error for the slope for females
+-   **m_intercept**: the intercept (phenotypic mean) for males
+-   **m_intercept_se**: standard error for the intercept (phenotypic mean) for males
+-   **m_slope**: the slope for males
+-   **m_slope_se**: standard error for the slope for males
+-   **fm_diff_int**: difference in intercepts between females and males
+-   **fm_diff_int_se**: standard error for the difference in intercepts between females and males
+-   **fm_diff_int_p**: p value associated with fm_diff_int
+-   **fm_diff_slope**: difference in slopes between females and males
+-   **fm_diff_slope_se**: standard error for for the difference in intercepts between females and males
+-   **fm_diff_slope_p**: p value associated with fm_diff_slope
+-   **batch_sd**: the square-root of the variance component for "batch" (see the text)
+-   **f_sd**: female residual standard deviation
+-   **m_sd**: female residual standard deviation
+-   **r_m**: marginal R squared (variance accounted for by fixed effects)
+-   **r_c**: conditional R squared (variance accounted for by fixed and random effects)
+-   **Category**: 9 function categories (see the text)
+-   **parameter_group**: Grouping for non-independent traits
+-   **lnVR**: log ratio between f_sd and m_sd
+-   **VlnVR**: the sampling variance for lnVR
+-   **low_lnVR**: lower confidence limit for lnVR
+-   **high_lnVR**: upper confidence limit for lnVR
+-   **t_val_sd**: t values associated with lnVR and VlnVR
+-   **p_val_sd**: p values associated with lnVR and VlnVR
+-   **Zr**: transformed value of sqrt(r_c)
+-   **VZr**: sampling variance for Zr
+-   **obs**: unique observation level ID
+
+## Extra: dataset for comparing models with and wihout substrains
+
+```{r, eval = FALSE}
+
+short_list <- discard(dat_list, ~ .x[["nstrain"]][[1]] == 1)
+
+processing2 <-map_dfr(short_list, get_para_poss2)
+dat_short <- data.frame(processing2, row.names = NULL)
+
+dat_short %>% left_join(dat_category, by = ("parameter_name" = "parameter_name") ) %>% arrange(Category)  -> dat_short
+
+dim(dat_short)
+
+#write_csv(dat, here("data/test4.csv"))
+write_csv(dat_short, here("data/data_comparision.csv"))
+```
+
+
+# Data analysis {.tabset}
+
+## Preparation for categorizing into scenarios
+
+Here, we merge p values for non-independent (closely related traits) using the custom functions for merging p values via the `poolr` package.
+
+```{r}
+# here we need to collapse p values which are related
+# split data into 2 ones with replications within parameter_group
+
+dat %>% group_by(parameter_group) %>% mutate(count = n()) -> dat
+# 
+dat1 <- dat[which(dat$count == 1), ]
+# 
+#dim(dat1)
+
+#  taking out independent traits
+dat2 <- dat[-which(dat$count == 1), ]
+
+# nesting data into a lot of data sets and apply p_mod function
+n_dat2 <- dat2 %>% group_by(parameter_group) %>%  nest()
+
+# function to get merged p value for intercepts
+p_mod_int <-function(data){
+  
+  len <- dim(data)[1]
+  Rmat <- matrix(0.8, nrow = len, ncol = len)
+  diag(Rmat) <- 1
+  
+  p_mod <- fisher(data$fm_diff_int_p, adjust = "liji", R = Rmat)
+  p<- p_mod$p
+  return(p)
+  
+}
+
+
+# function to get merged p value for slopes
+p_mod_slp <-function(data){
+  
+  len <- dim(data)[1]
+  Rmat <- matrix(0.8, nrow = len, ncol = len)
+  diag(Rmat) <- 1
+  
+  p_mod <- fisher(data$fm_diff_slope_p, adjust = "liji", R = Rmat)
+  p<- p_mod$p
+  return(p)
+  
+}
+
+# function to get merged p value for SD
+p_mod_sd <-function(data){
+  
+  len <- dim(data)[1]
+  Rmat <- matrix(0.8, nrow = len, ncol = len)
+  diag(Rmat) <- 1
+  
+  p_mod <- fisher(data$p_val_sd, adjust = "liji", R = Rmat)
+  p<- p_mod$p
+  return(p)
+  
+}
+
+
+# merged dat2
+m_dat2 <- n_dat2  %>% mutate(merged_p_sd = map_dbl(data, p_mod_sd), 
+                             merged_p_int = map_dbl(data, p_mod_int),
+                             merged_p_slp = map_dbl(data, p_mod_slp)
+)
+
+```
+
+## The number of cases Scenario A
+
+```{r}
+
+# full dataset
+dat_slopes <-dat %>%
+  filter (fm_diff_slope_p <= 0.05 & fm_diff_int_p > 0.05)
+
+#17 out of 363 traits sig slope diff - scenario A
+nrow(dat_slopes)
+
+# reduced dataset
+dat_slopes1 <-dat1 %>%
+  filter (fm_diff_slope_p <= 0.05 & fm_diff_int_p > 0.05)
+
+dat_slopes2 <-m_dat2 %>%
+  filter (merged_p_slp <= 0.05 & merged_p_int > 0.05)
+
+#11 out of 219 traits sig slope diff - scenario A
+nrow(dat_slopes1) + nrow(dat_slopes2) 
+```
+
+## The number of Scenario B
+
+```{r}
+# full dataset
+dat_int<- dat %>%
+  filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p >0.05)
+
+#154 out of 363 traits sig intercept diff  same slope - scenario B
+nrow(dat_int) 
+
+# reduced dataset
+dat_int1<- dat1 %>%
+  filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p >0.05)
+
+dat_int2 <-m_dat2 %>%
+  filter (merged_p_int <= 0.05 & merged_p_slp > 0.05)
+
+#93 out of 219 traits sig intercept diff  same slope - scenario B
+nrow(dat_int1) + nrow(dat_int2) 
+```
+
+## The number of Scenario C
+
+```{r}
+# full dataset
+dat_intSlopes<-dat %>%
+  filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p <= 0.05)
+
+#70 out of 363 sig intercept and slope diff - scenario C
+nrow(dat_intSlopes)
+
+# reduced dataset
+dat_intSlopes1<-dat1 %>%
+  filter (fm_diff_int_p <= 0.05 & fm_diff_slope_p <= 0.05)
+
+dat_intSlopes2 <-m_dat2 %>%
+  filter (merged_p_int <= 0.05 & merged_p_slp <= 0.05)
+
+#57 out of 219 sig intercept and slope diff - scenario C
+nrow(dat_intSlopes1)+ nrow(dat_intSlopes2) 
+```
+
+## Not in these scenarios
+
+```{r}
+# full dataset
+dat_intslopesNS<- dat %>%
+  filter (fm_diff_slope_p >0.05 & fm_diff_int_p > 0.05)
+#122 out of 363 - no sig difference between intercept and slope - scenario D
+nrow(dat_intslopesNS) 
+
+# reduced dataset
+dat_intslopesNS1<- dat1 %>%
+  filter (fm_diff_slope_p >0.05 & fm_diff_int_p > 0.05)
+
+dat_intslopesNS2 <-m_dat2 %>%
+  filter (merged_p_int > 0.05 & merged_p_slp > 0.05)
+
+#58 out of 219 no sig difference between intercept and slope - scenario D
+nrow(dat_intslopesNS1) + nrow(dat_intslopesNS2) 
+```
+
+## Sex difference in residual SD
+
+```{r}
+# full dataset
+# 249 out of 363 signficant differences in residual SDs
+length(which(dat$p_val_sd <= 0.05))
+#hist(log(dat$p_val_sd)) # p = 0.05 ~ - 3
+
+# 154 of out of 219 signficant differences in residual SDs
+length(which(m_dat2$merged_p_sd <= 0.05)) + length(which(dat1$p_val_sd <= 0.05))
+```
+
+## Creating Figure 2
+
+```{r, eval = F, fig.height= 8}
+
+# set colour for males and females
+
+colours <- c("#D55E00", "#009E73") # c("#882255","#E69F00") 
+colours2 <-c("#D55E00", "#7D26CD", "#009E73")
+
+#sex bias in slope parameter under scenario A
+dat_p1<-dat_slopes%>%
+  group_by_at(vars(Category)) %>%
+  summarise(malebias = sum(m_slope > f_slope), 
+            femalebias = sum(f_slope > m_slope), 
+            total= malebias + femalebias, 
+            malepercent = malebias*100/total, 
+            femalepercent = femalebias*100/total)  
+
+
+dat_p1<-gather(as.data.frame(dat_p1), 
+               key = sex, 
+               value = percent, 
+               malepercent:femalepercent, 
+               factor_key = TRUE)
+
+
+dat_p1$samplesize<-with(dat_p1, 
+                        ifelse(sex == "malepercent", malebias, femalebias) )
+
+# Adding All
+dat_p1 %>%  group_by(sex) %>% summarise(malebias = sum(malebias), 
+                                        femalebias= sum(femalebias),
+                                        total = sum(total),
+) -> part
+
+part %>% mutate(Category = "All",
+                sex = c("malepercent", "femalepercent"),
+                percent = c(100*(malebias[1]/total[1]), 100*(femalebias[1]/total[1])),
+                samplesize = c(malebias[1] ,  femalebias[1]))-> part
+
+
+#select(Category, malebias, femalebias, total, sex, percent, samplesize)
+dat_p1 <- bind_rows(dat_p1, part)
+
+
+
+p1 <- 
+  ggplot(dat_p1) +
+  aes(x = Category, y = percent, fill = sex) +
+  geom_col() +
+  geom_hline(yintercept = 50, linetype = "dashed", color = "gray40") +
+  geom_text(data = subset(dat_p1, samplesize != 0), aes(label = samplesize), 
+            position = position_stack(vjust = .5), 
+            color = "white", size = 3.5) +
+  scale_fill_manual(values = colours) +
+  theme_bw(base_size = 18) +
+  theme(strip.text.y = element_text(angle = 270, size = 10, margin = margin(t=15, r=15, b=15, l=15)), 
+        strip.text.x = element_text(size = 12),
+        strip.background = element_rect(colour = NULL,linetype = "blank", fill = "gray90"),
+        text = element_text(size=14),
+        panel.spacing = unit(0.5, "lines"),
+        panel.border= element_blank(),
+        axis.line=element_line(), 
+        panel.grid.major.x = element_line(linetype = "solid", colour = "gray95"),
+        panel.grid.major.y = element_line(linetype = "solid", colour = "gray95"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.minor.x = element_blank(), 
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        plot.title = element_text(size=14),
+        legend.position = "none") +
+  coord_flip()  +
+  labs(title = "Scenario A - different slopes, \n                    same intercepts")
+
+
+
+#sex bias in intercept parameter - scenario B
+dat_p2<-dat_int%>%
+  group_by_at(vars(Category)) %>%
+  summarise(malebias = sum(m_intercept > f_intercept), 
+            femalebias = sum(f_intercept > m_intercept), 
+            total= malebias + femalebias, 
+            malepercent = malebias*100/total, 
+            femalepercent = femalebias*100/total)  
+
+dat_p2<-gather(as.data.frame(dat_p2), 
+               key = sex, 
+               value = percent, 
+               malepercent:femalepercent, 
+               factor_key = TRUE)
+
+dat_p2$samplesize<-with(dat_p2, 
+                        ifelse(sex == "malepercent", malebias, femalebias) )
+
+# addeing All
+dat_p2 %>%  group_by(sex) %>% summarise(malebias = sum(malebias), 
+                                        femalebias= sum(femalebias),
+                                        total = sum(total),
+) -> part2
+
+part2 %>% mutate(Category = "All",
+                 sex = c("malepercent", "femalepercent"),
+                 percent = c(100*(malebias[1]/total[1]), 100*(femalebias[1]/total[1])),
+                 samplesize = c(malebias[1] ,  femalebias[1]))-> part2
+
+
+#select(Category, malebias, femalebias, total, sex, percent, samplesize)
+dat_p2 <- bind_rows(dat_p2, part2)
+
+
+p2 <- 
+  ggplot(dat_p2) +
+  aes(x = Category, y = percent, fill = sex) +
+  geom_col() +
+  geom_hline(yintercept = 50, linetype = "dashed", color = "gray40") +
+  geom_text(data = subset(dat_p2, samplesize != 0), aes(label = samplesize), 
+            position = position_stack(vjust = .5), 
+            color = "white", size = 3.5) +
+  scale_fill_manual(values = colours) + 
+  theme_bw(base_size = 18) +
+  theme(strip.text.y = element_text(angle = 270, size = 10, margin = margin(t=15, r=15, b=15, l=15)), 
+        strip.text.x = element_text(size = 12),
+        strip.background = element_rect(colour = NULL,linetype = "blank", fill = "gray90"),
+        text = element_text(size=14),
+        panel.spacing = unit(0.5, "lines"),
+        panel.border= element_blank(),
+        axis.line=element_line(), 
+        panel.grid.major.x = element_line(linetype = "solid", colour = "gray95"),
+        panel.grid.major.y = element_line(linetype = "solid", color = "gray95"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.minor.x = element_blank(), 
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        plot.title = element_text(size=14),
+        legend.position = "none") +
+  coord_flip() +
+  labs(title = "Scenario B - same slopes, \n            different intercepts")
+
+
+#sex bias in sig intercept and slope parameter - scenario C
+dat_p3<-dat_intSlopes%>%
+  group_by_at(vars(Category)) %>%
+  summarise(malebias = sum(m_intercept > f_intercept & m_slope > f_slope), 
+            mixed = sum(m_intercept > f_intercept & m_slope < f_slope, 
+                        m_intercept < f_intercept & m_slope > f_slope),
+            femalebias = sum(f_intercept > m_intercept & f_slope > m_slope), 
+            total= malebias + mixed + femalebias, 
+            malepercent = malebias*100/total, 
+            mixedpercent = mixed*100/total,
+            femalepercent = femalebias*100/total)  
+
+dat_p3<-gather(as.data.frame(dat_p3), 
+               key = sex, 
+               value = percent, 
+               malepercent:femalepercent, 
+               factor_key = TRUE)
+dat_p3$samplesize<-with(dat_p3, 
+                        ifelse(sex == "malepercent", malebias, ifelse(sex == "mixedpercent", mixed, femalebias)) )
+
+
+# adding All
+dat_p3 %>%  group_by(sex) %>% summarise(malebias = sum(malebias), 
+                                        mixed = sum(mixed),
+                                        femalebias= sum(femalebias),
+                                        total = sum(total),
+) -> part3
+
+part3 %>% mutate(Category = "All",
+                 sex = c("malepercent", "mixedpercent", "femalepercent"),
+                 percent = c(100*(malebias[1]/total[1]), 100*(mixed[1]/total[1]), 100*(femalebias[1]/total[1])),
+                 samplesize = c(malebias[1] , mixed[1], femalebias[1]))-> part3
+
+
+#select(Category, malebias, femalebias, total, sex, percent, samplesize)
+dat_p3 <- bind_rows(dat_p3, part3)
+
+p3 <- 
+  ggplot(dat_p3) +
+  aes(x = Category, y = percent, fill = sex) +
+  geom_col() +
+  geom_hline(yintercept = 50, linetype = "dashed", color = "gray40") +
+  geom_text(data = subset(dat_p3, samplesize != 0), aes(label = samplesize), 
+            position = position_stack(vjust = .5), 
+            color = "white", size = 3.5) +
+  scale_fill_manual(values = colours2) + 
+  theme_bw(base_size = 18) +
+  theme(strip.text.y = element_text(angle = 270, size = 10, margin = margin(t=15, r=15, b=15, l=15)), 
+        strip.text.x = element_text(size = 12),
+        strip.background = element_rect(colour = NULL,linetype = "blank", fill = "gray90"),
+        text = element_text(size=14),
+        panel.spacing = unit(0.5, "lines"),
+        panel.border= element_blank(),
+        axis.line=element_line(), 
+        panel.grid.major.x = element_line(linetype = "solid", colour = "gray95"),
+        panel.grid.major.y = element_line(linetype = "solid", color = "gray95"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.minor.x = element_blank(), 
+        axis.title.y = element_blank(),
+        plot.title = element_text(size=14),
+        legend.position = "none")+
+  ylab("Percentage (%)") +
+  coord_flip() +
+  labs(title = "Scenario C - different slopes, \n                different intercepts") 
+
+#sex bias in sd 
+dat_p4<-dat%>% filter(p_val_sd <= 0.05) %>% 
+  group_by_at(vars(Category)) %>%
+  summarise(malebias = sum(m_sd > f_sd), 
+            femalebias = sum(f_sd > m_sd), 
+            total= malebias + femalebias, 
+            malepercent = malebias*100/total, 
+            femalepercent = femalebias*100/total)
+
+
+dat_p4<-gather(as.data.frame(dat_p4), 
+               key = sex, 
+               value = percent, 
+               malepercent:femalepercent, 
+               factor_key = TRUE)
+
+dat_p4$samplesize<-with(dat_p4, 
+                        ifelse(sex == "malepercent", malebias, femalebias) )
+
+
+# addeing All
+dat_p4 %>%  group_by(sex) %>% summarise(malebias = sum(malebias), 
+                                        femalebias= sum(femalebias),
+                                        total = sum(total),
+) -> part4
+
+part4 %>% mutate(Category = "All",
+                 sex = c("malepercent", "femalepercent"),
+                 percent = c(100*(malebias[1]/total[1]), 100*(femalebias[1]/total[1])),
+                 samplesize = c(malebias[1] ,  femalebias[1]))-> part4
+
+
+#select(Category, malebias, femalebias, total, sex, percent, samplesize)
+dat_p4 <- bind_rows(dat_p4, part4)
+
+p4 <- 
+  ggplot(dat_p4) +
+  aes(x = Category, y = percent, fill = sex) +
+  geom_col() +
+  geom_hline(yintercept = 50, linetype = "dashed", color = "gray40") +
+  geom_text(data = subset(dat_p4, samplesize != 0), aes(label = samplesize), 
+            position = position_stack(vjust = .5), 
+            color = "white", size = 3.5) +
+  scale_fill_manual(values = colours) + 
+  theme_bw(base_size = 18) +
+  theme(strip.text.y = element_text(angle = 270, size = 10, margin = margin(t=15, r=15, b=15, l=15)), 
+        strip.text.x = element_text(size = 12),
+        strip.background = element_rect(colour = NULL,linetype = "blank", fill = "gray90"),
+        text = element_text(size=14),
+        panel.spacing = unit(0.5, "lines"),
+        panel.border= element_blank(),
+        axis.line=element_line(), 
+        panel.grid.major.x = element_line(linetype = "solid", colour = "gray95"),
+        panel.grid.major.y = element_line(linetype = "solid", color = "gray95"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.minor.x = element_blank(), 
+        axis.title.y = element_blank(),
+        plot.title = element_text(size=14),
+        legend.position = "none")+
+  ylab("Percentage (%)") +
+  coord_flip() +
+  labs(title = "Statistically significant\nsex difference in residual SDs") 
+
+# putting all together
+(p1 + p2) / (p3 + p4) +   plot_annotation(tag_levels = 'A')
+
+# note that the key was inserted using Illustrator
+
+```
+
+![](../fig/Fig2.png)
+
+**Fig. 2** Sex biases for mice phenotypic traits arrange in functional groups (see the main tex)
+
+## Functional categories in the dataset
+
+```{r}
+par(mar = c(6, 6, 6, 6))
+v = c( 85, 39, 21, 31, 25, 111, 8, 22, 33)
+t = c(
+ 'behaviour',
+ 'eye',
+ 'hearing',
+ 'heart',
+ 'hematology',
+ 'immunology',
+ 'metabolism',
+ 'morphology',
+ 'physiology'
+)
+d = data.frame(trait = t, n = v)
+d = d[order(d$n, decreasing = TRUE), ]
+barplot(
+ height = d$n,
+ names.arg = d$trait,
+ las = 3,
+ col = seq_along(d$trait) + 1,
+ ylim = c(0, 80)
+)
+```
+
+**Fig. S1** The number of traits in each of 9 functional categories.
+
+
+## Extra: Comparing models with and wihout substrains
+
+
+```{r}
+# loading data
+dat_short <- read_csv(here("data/data_comparision.csv"))
+
+
+dat_short %>% group_by(parameter_group) %>% mutate(count = n()) -> dat_short
+# 
+dat_short1 <- dat_short[which(dat_short$count == 1), ]
+# 
+#dim(dat1)
+
+#  taking out independent traits
+dat_short2 <- dat_short[-which(dat_short$count == 1), ]
+
+# nesting data into a lot of data sets and apply p_mod function
+n_dat_short2 <- dat_short2 %>% group_by(parameter_group) %>%  nest()
+
+# function to get merged p value for comparing models
+p_comp <-function(data){
+  
+  len <- dim(data)[1]
+  Rmat <- matrix(0.8, nrow = len, ncol = len)
+  diag(Rmat) <- 1
+  
+  p_mod <- fisher(data$p_value, adjust = "liji", R = Rmat)
+  p<- p_mod$p
+  return(p)
+  
+}
+
+# merged data
+m_dat_short2 <- n_dat_short2  %>% mutate(merged_p_comp = map_dbl(data, p_comp))
+
+# short dataset
+dat_sig <-dat_short %>%
+  filter (p_value <= 0.05)
+
+#155 out of 248 traits sig comparisons
+nrow(dat_short)
+nrow(dat_sig)
+
+# reduced dataset
+dat_sig1 <-dat_short1 %>%
+  filter (p_value <= 0.05)
+
+dat_sig2 <-m_dat_short2 %>%
+  filter (merged_p_comp <= 0.05)
+
+#98 out of 154 traits sig comparisons
+nrow(dat_short1) + nrow(m_dat_short2)
+nrow(dat_sig1) + nrow(dat_sig2) 
+
+
+```
+
+# Meta-analysis {.tabset}
+
+## Calculating absolute effect sizes
+
+Here we convert our effect sizes to absolute values assuming folded normal distributions.
+
+```{r}
+## for folded normal distribution see: 
+## https://en.wikipedia.org/wiki/Folded_normal_distribution
+
+# folded mean
+folded_mu <-function(mean, variance){
+  mu <- mean
+  sigma <- sqrt(variance)
+  fold_mu <- sigma*sqrt(2/pi)*exp((-mu^2)/(2*sigma^2)) + mu*(1 - 2*pnorm(-mu/sigma))
+  fold_mu
+} 
+
+# folded variance
+folded_v <-function(mean, variance){
+  mu <- mean
+  sigma <- sqrt(variance)
+  fold_mu <- sigma*sqrt(2/pi)*exp((-mu^2)/(2*sigma^2)) + mu*(1 - 2*pnorm(-mu/sigma))
+  fold_se <- sqrt(mu^2 + sigma^2 - fold_mu^2)
+  # adding se to make bigger mean
+  fold_v <-fold_se^2
+  fold_v
+} 
+
+
+dat <- dat %>% mutate(abs_int = folded_mu(fm_diff_int, fm_diff_int_se^2), 
+                      abs_slope = folded_mu(fm_diff_slope, fm_diff_slope_se^2),
+                      abs_lnVR = folded_mu(lnVR, VlnVR),
+                      V_abs_int = folded_v(fm_diff_int, fm_diff_int_se^2), 
+                      V_abs_slope = folded_v(fm_diff_slope, fm_diff_slope_se^2),
+                      V_abs_lnVR = folded_v(lnVR, VlnVR),
+                      total_n = f_n + m_n)
+```
+
+## Comparing sex difference in intercepts
+
+This is a meta-analytic model of sex differences in intercepts (mean traits). We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
+
+```{r}
+modelia <- rma.mv(yi = abs_int, 
+                  V= V_abs_int, 
+                  random = list(~1| Category, ~1| parameter_group, ~1|obs), 
+                  data = dat)
+summary(modelia)
+
+# robust variance estimator
+robust(modelia, cluster  =  dat$parameter_group)
+
+# I2 (heterogeneity)
+i2_ml(modelia)
+```
+
+This is a meta-regression model of sex differences in intercepts (mean traits) with a functional category as a moderator. We used the `rubust` function calculates to see whether our results form the model is robust (consistent).
+
+```{r}
+model1a <- rma.mv(yi = abs_int, V= V_abs_int, mod = ~ Category - 1,
+                  random = list(~1| parameter_group, ~1|obs), 
+                  data = dat)
+summary(model1a)
+robust(model1a, cluster  =  dat$parameter_group)
+# R2 (variance explained)
+r2_ml(model1a)
+```
+
+## Comparing sex difference in slopes
+
+This is a meta-analytic model of sex differences in slopes. We used the `rubust` function calculates to see whether our results form the model is robust (consistent).
+
+```{r}
+modelsa <- rma.mv(yi = abs_slope, V= V_abs_slope, 
+                  random = list(~1| Category, ~1| parameter_group, ~1|obs), 
+                  data = dat)
+summary(modelsa) # not sig this means sometimes male is high other times female has steaper slops
+robust(modelsa, cluster  =  dat$parameter_group)
+
+# I2 (heterogeneity)
+i2_ml(modelia)
+```
+
+This is a meta-regression model of sex differences in slopes with a functional category as a moderator. We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
+
+```{r}
+model2a <- rma.mv(yi = abs_slope, V= V_abs_slope,
+                  mod = ~ Category - 1,
+                  random = list(~1| parameter_group, ~1|obs), 
+                  data = dat)
+summary(model2a)
+robust(model2a, cluster  =  dat$parameter_group)
+# R2 (variance explained)
+r2_ml(model2a)
+```
+
+## Comparing sex difference in resdiaul SDs
+
+This is a meta-analytic model of sex differences in residual SDs. We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
+
+```{r}
+modelsda <- rma.mv(yi = abs_lnVR, V= V_abs_lnVR, 
+                   random = list(~1| Category, ~1| parameter_group, ~1|obs), 
+                   data = dat)
+summary(modelsda)
+robust(modelsda, cluster  =  dat$parameter_group)
+
+# I2 (heterogeneity)
+i2_ml(modelsda)
+```
+
+This is a meta-regression model of sex differences in residual SDs with a functional category as a moderator. We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
+
+```{r}
+# meta-regression
+model3a <- rma.mv(yi = abs_lnVR, V= V_abs_lnVR, mod = ~ Category - 1,
+                  random = list(~1| parameter_group, ~1|obs), 
+                  data = dat)
+summary(model3a)
+# R2 (variance explained)
+r2_ml(model3a)
+```
+
+## Comparing model fits
+
+This is a meta-analytic model of Zr (transformed model fits). We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
+
+```{r}
+modelr0 <- rma.mv(yi = Zr, 
+                  V= VZr, 
+                  random = list(~1| Category, ~1| parameter_group, ~1|obs), 
+                  data = dat)
+summary(modelr0)
+robust(modelr0, cluster  =  dat$parameter_group)
+
+#funnel(modelr0)
+i2_ml(modelr0)
+```
+
+This is a meta-regression model of Zr (transformed model fits). with a functional category as a moderator. We use the `rubust` function calculates to see whether our results form the model is robust (consistent).
+
+```{r}
+# meta-regression
+modelr1 <- rma.mv(yi = Zr, mod = ~ Category - 1,
+               V= VZr, 
+               random = list(~1| parameter_group, ~1|obs), 
+               data = dat)
+
+summary(modelr1)
+# R2 (variance explained)
+r2_ml(modelr1)
+```
+
+## Obtaining correlations among intercepts, slopes, SDs and model fits
+
+```{r, eval = FALSE}
+
+# quad-variate model
+
+mod_lnsd <- bf(log(abs_lnVR) | se(sqrt(V_abs_lnVR)/abs_lnVR)  ~ - 1 +  Category+ (1|q|parameter_group))
+mod_lnslp <- bf(log(abs_slope) | se(sqrt(V_abs_slope)/abs_slope)  ~  - 1 +  Category + (1|q|parameter_group))
+mod_lnint <- bf(log(abs_int) | se(sqrt(V_abs_int)/abs_int)  ~  - 1 +  Category + (1|q|parameter_group))
+mod_lnzr <- bf(log(Zr) | se(sqrt(VZr)/Zr)  ~  - 1 +  Category + (1|q|parameter_group))
+
+fit_4b <- brm(mod_lnsd + mod_lnslp + mod_lnint + mod_lnzr,
+              data = dat,
+              chains = 2, cores = 2, iter = 4000, warmup = 1000,
+              backend = "cmdstanr"
+              )
+
+summary(fit_4b)
+
+# saving the model
+saveRDS(fit_4b, file = here("data", "fit_4b.rds"))
+```
+
+```{r, echo = FALSE}
+fit_4b <- readRDS(here("data", "fit_4b.rds"))
+
+summary(fit_4b)
+```
+
+## Creating Figure 3
+
+```{r, eval = F}
+#  colour-blind freindly colour
+cbpl <- c("#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
+          "#CC79A7", "#56B4E9", "#AA4499", "#DDCC77")
+
+point.size = 2
+branch.size = 3.5
+
+# intercept meta-analysis
+p1 <- orchard_plot2(modelia, mod = "Int", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45, point.size = point.size, N = dat$total_n, legend.on = TRUE, branch.size = branch.size,) +
+  scale_y_discrete(labels = "Overall") +
+  scale_fill_manual(values = "#999999") +
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-0.5, 1.5))
+
+# intercept meta-regression
+p2 <- orchard_plot2(model1a, mod = "Category", xlab = "Absolute difference in standardized intercepts  (F-M)", angle = 45,  point.size = point.size, N = dat$total_n, legend.on = TRUE, branch.size = branch.size,) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-0.5, 1.5))
+
+# slope meta-analysis
+p3 <- orchard_plot2(modelsa, mod = "Int", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) +
+  scale_y_discrete(labels = "") +
+  scale_fill_manual(values = "#999999") +
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-1.5, 10))
+
+# slope meta-regression
+p4 <- orchard_plot2(model2a, mod = "Category", xlab = "Absolute difference in standardized slopes (F-M)", angle = 45, cb = F,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) + 
+  scale_y_discrete(labels = rep("", 9)) +
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-1.5, 10))
+
+# SD meta-analysis
+p5 <- orchard_plot2(modelsda, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) +
+  scale_y_discrete(labels = "") +
+  scale_fill_manual(values = "#999999") +
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-0.2, 1.9))
+
+# SD meta-regression
+p6 <- orchard_plot2(model3a, mod = "Category", xlab = "Absolute relative difference in SD (lnVR: F/M)", angle = 45, cb = F,  point.size = point.size, k = F, N = dat$total_n, legend.on = FALSE, branch.size = branch.size,) + 
+  scale_y_discrete(labels = rep("", 9)) +
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-0.2, 1.9))
+
+
+# putting it together
+(p1 | p3 | p5) / (p2 | p4 | p6)  + plot_layout(heights = c(1, 3)) + plot_annotation(tag_levels = 'A')
+
+```
+
+![](../fig/Fig3.png)
+
+**Fig. 3** Orchard plots illustrating results of multilevel meta-analyses (see the main text)
+
+
+## Creating Figure S1
+
+```{r, eval = F}
+# meta-analysis with model fit
+t1 <- orchard_plot2(modelr0, mod = "Int", xlab = "Zr (transformed variance accounted for)", angle = 45, 
+                    point.size = point.size, branch.size = branch.size, k = F, N = dat$total_n) +
+  scale_y_discrete(labels = "Overall") +
+  scale_fill_manual(values = "#999999") +
+  scale_colour_manual(values = "#999999") #+
+  #xlim(c(-0.5, 1.5))
+
+# meta-regression with model fit
+t2 <- orchard_plot2(modelr1, mod = "Category", xlab = "Zr (transformed variance accounted for)", angle = 45,  point.size = point.size, k = F, N = dat$total_n, branch.size = branch.size,) + 
+  #scale_y_discrete(labels = "Overall") +
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) #+
+  #xlim(c(-0.5, 1.5))
+
+(t1) / (t2)  + plot_layout(heights = c(1, 3)) + plot_annotation(tag_levels = 'A')
+```
+
+
+![](../fig/FigS1.png)
+
+**Fig. S1** Orchard plots illustrating results of multilevel meta-analyses for Zr (model fit)
+
+## Creating Figure 4
+
+```{r, fig.height= 12}
+# creating added precision
+
+# dat %>%  mutate(pre_slp_int = 1/sqrt(V_abs_int/abs_int^2 + V_abs_slope/abs_slope^2),
+#                 pre_slp_sd =  1/sqrt(V_abs_slope/abs_slope^2 + V_abs_lnVR/abs_lnVR^2),
+#                 pre_int_sd = 1/sqrt(V_abs_int/abs_int^2 + V_abs_lnVR/abs_lnVR^2)
+# ) -> dat 
+
+#  colour-blind freindly colour
+cbpl <- c("#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00", 
+          "#CC79A7", "#56B4E9", "#AA4499", "#DDCC77")
+
+f1 <- ggplot(data = dat) +
+  geom_point(aes(x = log(abs_slope), y = log(abs_int), col = Category, size = total_n)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(x = "ln(Absolute difference in standardized slopes)" , y = "ln(Absolute difference in standardized intercepts)")+
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x = - 10, y = -0.5, label="r = 0.82 [0.76, 0.88]", size = 3)+
+  theme_bw()  +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10)) +
+  guides(col = "none") 
+
+f2 <- ggplot(data = dat) +
+  geom_point(aes(x = log(abs_slope), y = log(abs_lnVR), col = Category, size = total_n)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(x = "ln(Absolute difference in standardized slopes)" , y = "ln(Absolute relative difference in SD)") +
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x= -9.8, y = 0.5, label="r = 0.14 [-0.01., 0.30]", size = 3)+
+  theme_bw()   +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10)) + 
+  guides(col = "none", size = "none") 
+  #scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) +
+
+f3 <- ggplot(data = dat) +
+  geom_point(aes(x = log(abs_int), y = log(abs_lnVR), col = Category, size = total_n)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(x = "ln(Absolute difference in standardized intercepts)" , y = "ln(Absolute relative difference in SD)") +
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x= - 9.5, y = 0.5, label="r = 0.07 [-0.08, 0.22]", size = 3)+
+  theme_bw() +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10)) +
+  guides(size = "none") 
+
+
+ (f3/f2/f1)  + plot_annotation(tag_levels = 'A')
+
+```
+
+**Fig. 4** Bivariate ordinations of log absolute difference between males and females (see the main text)
+
+## Creating Figure S2
+
+```{r, fig.height= 12}
+
+f4 <- ggplot(data = dat) +
+  geom_point(aes(y = log(Zr), x = log(abs_int), col = Category, size = total_n)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(y = "Zr (transformed variance accounted for)", x =   "ln(Absolute difference in standardized intercepts)") +
+  labs(color='Trait types',size = "Sample size (N)") +
+  annotate(geom="text", x= -2.5, y = -6, label="r = 0.53 [0.41., 0.63]", size = 3)+
+  theme_bw()   +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10)) +
+  guides(size = "none") #+
+  #theme(legend.position= c(0.03, 0.97), legend.justification = c(0, 0.97))
+  
+
+f5 <- ggplot(data = dat) +
+  geom_point(aes(y = log(Zr), x = log(abs_slope), col = Category, size = total_n)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(y = "Zr (transformed variance accounted for)" , x = "ln(Absolute difference in standardized slopes)") +
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x=  -2, y = -6, label="r = 0.37 [0.23, 0.41]", size = 3)+
+  theme_bw() +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
+  guides(col = "none", size = "none") +
+  scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) +
+  theme(legend.position = c(0.03, 0.97), legend.justification = c(0, 0.97))
+
+
+f6 <- ggplot(data = dat) +
+  geom_point(aes(y = log(Zr), x = log(abs_lnVR), col = Category, size = total_n)) + 
+  scale_fill_manual(values = cbpl) +
+  scale_colour_manual(values = cbpl) +
+  labs(y = "Zr (transformed variance accounted for)", x = "ln(Absolute relative difference in SD)" )+
+  labs(color='Trait types', size = "Sample size (N)") +
+  annotate(geom="text", x= -0.25, y = - 5, label="r = 0.18 [0.02, 0.33]", size = 3)+
+  theme_bw()  +
+  theme(legend.key.size = unit(0.5, 'cm'), legend.title = element_text(size=10))+
+  guides(col = "none") #+
+  #scale_size_continuous(breaks = c(200, 2000, 20000), guide = guide_legend()) 
+
+
+(f4/f5/f6) + plot_annotation(tag_levels = 'A')
+```
+
+**Fig. S2** Bivariate ordinations of log absolute difference between males and females (see the main text)
+
+# Software and package versions
+
+```{r}
+sessionInfo() %>% pander()
+```
