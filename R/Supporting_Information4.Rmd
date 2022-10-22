@@ -573,6 +573,52 @@ print.orchard <- function(object, ...){
   return(object$mod_table)
 }
 
+# function to calculate SMD (standardized mean difference; Cohen's) and lnRR (log response ratio)
+
+extra_effect <- function (i){
+
+i %>% group_by(sex) %>% summarise(mean = mean(data_point),
+                                     sd = sd(data_point),
+                                     n = n()) -> sex_specific
+
+sex_specific
+sex_specific[1, "mean"]
+
+# get parameters
+parameter_name <- tolower(i[["parameter_name"]][1])
+mean_female <- sex_specific[1, "mean"]
+mean_male <- sex_specific[2, "mean"]
+sd_female <- sex_specific[1, "sd"]
+sd_male <- sex_specific[2, "sd"]
+n_female <- sex_specific[1, "n"]
+n_male <- sex_specific[2, "n"]
+
+# putting it together
+paras <- data.frame(parameter_name, 
+                    mean_female, mean_male,
+                    sd_female, sd_male,
+                    n_female, n_male)
+names(paras) <- c('parameter_name',
+                  'mean_female', 'mean_male',
+                  'sd_female', 'sd_male',
+                  'n_female', 'n_male') # variance component
+
+
+paras <- escalc("SMD", 
+             m1i = mean_female, m2i = mean_male, 
+             sd1i = sd_female, sd2i = sd_male, 
+             n1i = n_female, n2i = n_male, 
+             data = paras, var.names=c("SMD","v_SMD"))
+paras <- escalc("ROM", 
+             m1i = mean_female, m2i = mean_male, 
+             sd1i = sd_female, sd2i = sd_male, 
+             n1i = n_female, n2i = n_male, 
+             data = paras, var.names=c("lnRR","v_lnRR"), replace = F)
+
+invisible(paras)
+
+}
+
 ```
 
 ## Loading raw data and creating a list of trait data
@@ -665,7 +711,7 @@ dat <- data.frame(processing, row.names = NULL)
 
 dat %>% left_join(dat_category, by = ("parameter_name" = "parameter_name") ) %>% arrange(Category)  -> dat
 
-dim(dat)
+#dim(dat)
 
 #write_csv(dat, here("data/test4.csv"))
 write_csv(dat, here("data/data_parameters7.csv"))
@@ -693,7 +739,28 @@ dat %>% mutate(lnVR = log(f_sd/m_sd) + 1/(2*(f_n-3)) - 1/(2*(m_n-3)),
 write_csv(dat, here("data/data_parameters8.csv"))
 ```
 
-## Dataset and meta-data
+
+## Obtaining SMD (standardised mean difference) and lnRR (log response rato)
+
+```{r}
+extra_dat <-map_dfr(dat_list, extra_effect)
+
+extra <- data.frame(processing, row.names = NULL)
+dat <- read_csv(here("data/data_parameters8.csv"))
+
+pos<-match(dat$parameter_name, extra_dat$parameter_name)
+
+extra <- extra_dat[pos, ]
+extra <- data.frame(extra, row.names = NULL)
+
+
+write_csv(extra, here("data/data_smd_lnrr.csv"))
+
+```
+
+
+
+## Main dataset and meta-data
 
 ```{r}
 # loading data
@@ -761,6 +828,39 @@ dim(dat_short)
 write_csv(dat_short, here("data/data_comparision.csv"))
 ```
 
+## Dataset (SMD & lnRR) and meta-data
+
+```{r}
+# loading data
+extra <- read_csv(here("data/data_smd_lnrr.csv"))
+
+# making character strings into factors
+extra <- extra %>% mutate_if(is.character, as.factor) 
+# visualizing
+kable(extra, "html", digits = 3) %>% 
+  kable_styling("striped", position = "left") %>% 
+  scroll_box(width = "100%", 
+    height = "250px")
+
+# combining main data and extra data
+
+dat_extra <- cbind(dat, extra[, 8:11])
+
+
+write_csv(dat_extra, here("data/data_parameters_extra.csv"))
+```
+
+-   **parameter_name**: the name of phenotypic traits
+-   **mean_female**: female mean for a particular phenotypic trait
+-   **mean_male**: male mean for a particular phenotypic trait
+-   **sd_female**: female standard deviation for  a particular trait
+-   **sd_male**: male standard deviation for  a particular trait
+-   **n_female**: the number of females for a particular trait
+-   **n_male**: the number of males for a particular trait
+-   **SMD**: standardized mean difference between males and females
+-   **v_SMD**: sampling variance for SMD
+-   **lnRR**: log response ratio between males and females
+-   **v_lnRR**: sampling variance for lnRR
 
 # Data analysis {.tabset}
 
