@@ -63,7 +63,7 @@ check_cmdstan_toolchain(fix = TRUE, quiet = TRUE)
 We load custom function not included in the packages above.
 
 -   functions for calculating 'parameters' (intercepts, slopes and residuals SDs for both males and females and model fit) : `get_parmetersN`
--   functions for drawing orchard plots (modified from the original): `orchard_plot2` and assoicated functions.
+-   functions for drawing orchard plots (modified from the original): `orchard_plot2` and associated functions.
 
 ```{r}
 
