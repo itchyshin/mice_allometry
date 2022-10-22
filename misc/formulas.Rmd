@@ -1,0 +1,86 @@
+---
+title: "Formulas"
+author: "Shinichi Nakagawa"
+date: "12/01/2022"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Standardised mean difference (SMD)
+
+$$
+\text{SMD} = d = \frac  {m_{1} - m_{2} } {sd_{pool}} 
+$$
+
+$$
+sd_{pool} = \sqrt{\frac{(n_{1} - 1)sd^2_{1} + (n_{2}-1)sd^2_{2}}{n_{1} + n_{2} -2}}
+$$
+
+$$
+var({d}) =\frac{1}{n_{1}} + \frac{1}{n_{2}}  + \frac{d}{2(n_{1} + n_{2})}
+$$
+## Mean difference
+
+$$
+\text{MD} = m{1} - m{2}
+$$
+
+$$
+var(\text{MD}) = \frac{sd_{1}^2}{n_{1}} + \frac{sd_{2}^2}{n_{2}} = se_1 + se_2
+$$
+### Mean
+
+$$
+\text{Mean} = \bar{x}_{i}
+$$
+
+$$
+var(\text{Mean}) = \frac{sd^2}{n}
+$$
+### Proprition
+
+$$
+\text{Proportion} = p = \frac{y}{n}
+$$
+
+
+$$
+var(p) = \frac{p(1-p)}{n}  = \frac{y(n-y)}{n^3}
+$$
+
+
+### log response ratio 
+
+
+$$
+\ln\text{RR} = \ln \left( \frac{m_{1}}{m_{2}} \right) = \ln{m_{1}} - \ln{m_{2}}
+$$
+$$
+v(\ln\text{RR}) = \frac{s_{1}^2}{n_{1}m_1^2} +  \frac{s_{2}^2}{n_{2}m_{2}^2},
+$$
+
+
+### slope difference
+
+$$
+\text{SD} = slope_{1} - slope_{2}
+$$
+
+$$
+var(\text{SLD}) = se_{slope_1} +  se_{slope_2}
+$$
+
+
+### intercept difference
+
+$$
+\text{ID} = int_{1} - int_{2} (= \ln\text{RR})
+$$
+$$
+var(\text{ID}) = se_{int_1} +  se_{int_2}
+$$

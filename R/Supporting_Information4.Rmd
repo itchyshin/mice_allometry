@@ -691,7 +691,7 @@ unique(allometrynew2$strain_name)
 
 ## Loading a list of trait data and group category
 
-```{r,  eval=FALSE}
+```{r}
 # loading data
 dat_list <- readRDS(here("data/dat_list2.rds"))
 
@@ -742,7 +742,7 @@ write_csv(dat, here("data/data_parameters8.csv"))
 
 ## Obtaining SMD (standardised mean difference) and lnRR (log response rato)
 
-```{r}
+```{r,  eval=FALSE}
 extra_dat <-map_dfr(dat_list, extra_effect)
 
 extra <- data.frame(processing, row.names = NULL)
